@@ -13,6 +13,9 @@ module.exports = {
       ...require('./webpack.aliases'),
     },
   },
+  optimization: {
+    runtimeChunk: 'single',
+  },
   stats: 'minimal',
   /**
    * Fix: Enable inline-source-map to fix following:
