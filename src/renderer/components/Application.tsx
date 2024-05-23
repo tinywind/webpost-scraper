@@ -50,7 +50,7 @@ const Application: React.FC = () => {
     <div id='erwt'>
       <div className='header'>
         <div className='main-heading'>
-          <h1 className='themed'>ERWT - Electron Boilerplate</h1>
+          <h1 className='themed text-orange-300 italic'>ERWT - Electron Boilerplate</h1>
         </div>
         <div className='main-teaser'>Desktop Application with Electron, React, Webpack & TypeScript</div>
         <div className='versions'>

@@ -28,12 +28,12 @@ module.exports = [
   {
     // CSS Loader
     test: /\.css$/,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'postcss-loader' }],
   },
   {
     // SCSS (SASS) Loader
     test: /\.s[ac]ss$/i,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }, { loader: 'postcss-loader' }],
   },
   {
     // Assets loader

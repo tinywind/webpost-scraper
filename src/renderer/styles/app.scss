@@ -7,6 +7,10 @@
  * @package : Application Sass Stylesheet
 */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import './dark_theme.scss';
 @import './light_theme.scss';
 
@@ -142,7 +146,6 @@ button {
   h1 {
     font-size: 1.5rem;
     font-weight: 400;
-    color: var(--erwt-heading-color);
     line-height: 1;
     text-transform: uppercase;
   }
@@ -225,7 +228,6 @@ button {
 }
 
 #erwt {
-  // user-select: none;
   display: flex;
   flex-direction: column;
   height: 100%;
