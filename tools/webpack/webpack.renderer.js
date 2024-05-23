@@ -14,7 +14,7 @@ module.exports = {
     },
   },
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: false, // 'single'
   },
   stats: 'minimal',
   /**
