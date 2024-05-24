@@ -2,7 +2,7 @@ const path = require('path');
 const cwd = process.cwd();
 
 function inDev() {
-  return process.env.NODE_ENV == 'development';
+  return process.env.NODE_ENV === 'development';
 }
 
 function createWebpackAliases(aliases) {

@@ -1,15 +1,7 @@
-/*
- *=========================================================================
- * ERWT Light Theme
- *=========================================================================
- *
- * Light theme for ERWT application.
- */
-
 body:not(.dark-mode) {
   // Application
   --app-accent-color: #27954f;
-  --app-bgcolor: #e2e2e2;
+  --app-bgcolor: #eeeeee;
 
   // Selection
   --selection-bgcolor: var(--app-accent-color);
@@ -43,9 +35,6 @@ body:not(.dark-mode) {
   --titlebar-popup-item-hover-color: #000000;
   --titlebar-popup-item-hover-shortcut-color: var(--app-accent-color);
   --titlebar-popup-item-hover-bgcolor: #d6dadea2;
-
-  // ERWT
-  --erwt-heading-color: #282828;
 
   // Overrides
   .main-teaser {

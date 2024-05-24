@@ -32,7 +32,7 @@ module.exports = {
     {
       name: '@electron-forge/plugin-webpack',
       config: {
-        devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline' data:`,
+        devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data:; img-src * data:; script-src 'self' 'unsafe-inline' data:`,
         port: 3000,
         loggerPort: 9000,
         mainConfig: path.join(rootDir, 'tools/webpack/webpack.main.js'),

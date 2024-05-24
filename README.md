@@ -1,7 +1,6 @@
 # Webpost Scraper
 
-Webpost Scraper is a Windows-based Electron application designed to collect posts from websites. 
-The primary goal of this project is to develop an Electron application for Windows that can efficiently scrape and collect posts from various websites.
+Webpost Scraper is a Windows-based Electron application designed to collect posts from websites. The primary goal of this project is to develop an Electron application for Windows that can efficiently scrape and collect posts from various websites. This application was inspired by [wepplication tools scrapper](https://wepplication.github.io/tools/scrapper/).
 
 ## Getting Started
 
@@ -36,3 +35,5 @@ This project is licensed under the MIT License.
 
 This project was created using the [electron-react-webpack-typescript-2024](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template.
 See the [LICENSE](https://raw.githubusercontent.com/codesbiome/electron-react-webpack-typescript-2024/master/LICENSE) file for details.
+
+---

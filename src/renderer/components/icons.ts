@@ -7,6 +7,11 @@ import nodejs from '@assets/icons/nodejs.png';
 import webpack from '@assets/icons/webpack.png';
 import license from '@assets/icons/license.png';
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
+library.add(fas);
+
 export default {
   chrome,
   react,
