@@ -41,7 +41,7 @@ const CrawlerModal: React.FC<{
       article: { selector: 'a.item', property: '', regex: '' },
       title: { selector: '.title', property: 'innerText', regex: '' },
       link: { selector: 'a.item', property: 'href', regex: '' },
-      date: { selector: '.etc > div:last-child', property: 'textContent', regex: '' },
+      date: { selector: '.etc > div:last-child', property: '', regex: '' },
     });
   }, [open]);
 
@@ -158,7 +158,7 @@ const CrawlerModal: React.FC<{
               {item.site.favicon && <img src={item.site.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
               <div className='flex flex-col flex-1'>
                 <span className='text-sm font-medium'>{item.title}</span>
-                <span className='text-xs text-gray-500'>{moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss') || ''}</span>
+                <span className='text-xs text-gray-500'>{moment(item.createdAt).isValid() ? moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss') : moment().format('YYYY-MM-DD HH:mm:ss')}</span>
               </div>
             </a>
           ))}
