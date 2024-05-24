@@ -1,4 +1,5 @@
-import { ipcMain, net } from 'electron';
+import { dialog, ipcMain, net } from 'electron';
+import { Setting } from '@renderer/types';
 
 export type FetchResult = {
   ok: boolean;
@@ -30,5 +31,19 @@ export const registerUtilIpc = () => {
       headers: convertHeaderToArray(response.headers),
       html: await response.text(),
     };
+  });
+  ipcMain.handle('export-settings', (event, setting: Setting) => {
+    dialog
+      .showSaveDialog({
+        title: 'Save Settings',
+        defaultPath: 'setting.json',
+        filters: [{ name: 'JSON', extensions: ['json'] }],
+      })
+      .then(({ filePath }) => {
+        if (filePath) {
+          const string = JSON.stringify(setting);
+          require('fs').writeFileSync(filePath, string);
+        }
+      });
   });
 };

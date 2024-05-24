@@ -1,3 +1,9 @@
+export type Setting = {
+  pollingInterval: number;
+  retention: number;
+  sites: Site[];
+};
+
 export type Site = {
   id: string; // uuid
   name: string;

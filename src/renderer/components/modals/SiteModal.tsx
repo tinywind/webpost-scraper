@@ -113,7 +113,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
   );
 
   return (
-    <AppModal title={'Setting'} closeModal={closeModal} apply={apply}>
+    <AppModal title={'Site'} closeModal={closeModal} apply={apply}>
       <label htmlFor='title' className='block text-sm font-medium text-gray-700 flex-1 truncate' title={data.name}>
         Title
       </label>
@@ -148,7 +148,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
         {InputFields('date', ['selector', 'property', 'regex'])}
       </div>
       <div className='text-center'>
-        <button disabled={loading} onClick={fetchPreview} className='text-sm px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600'>
+        <button disabled={loading} onClick={fetchPreview} className='text-sm w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600'>
           {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faEye} />}
         </button>
       </div>

@@ -22,7 +22,7 @@ export default function AppModal({ children, title, closeModal, apply }: { child
       </div>
       {apply && (
         <div className='mt-auto flex justify-end space-x-2 p-4'>
-          <button onClick={apply} className='px-4 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600'>
+          <button onClick={apply} className='w-full py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600'>
             <FontAwesomeIcon icon={faCheck} />
           </button>
         </div>

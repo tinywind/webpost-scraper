@@ -1,6 +1,6 @@
 import router from '@renderer/router';
-import { useAppDispatch } from '@renderer/contexts/store';
-import { useDark, useLight } from '@renderer/contexts/themeSlice';
+import store from '@renderer/contexts/store';
+import { setDark, setLight } from '@renderer/contexts/themeSlice';
 
 export type MenuItem = {
   name: string;
@@ -19,61 +19,29 @@ const navigatorMenus: Menu[] = [
   {
     name: 'View',
     items: [
-      {
-        name: 'List',
-        action: () => router.navigate('/'),
-      },
-      {
-        name: '__',
-      },
-      {
-        name: 'Settings',
-        action: () => router.navigate('/settings'),
-      },
+      { name: 'List', action: () => router.navigate('/'), shortcut: 'Ctrl+1' },
+      { name: '__' },
+      { name: '__' },
+      { name: 'Settings', action: () => router.navigate('/settings'), shortcut: 'Ctrl+2' },
     ],
   },
   {
     name: 'Theme',
     items: [
-      {
-        name: 'Light',
-        action: () => {
-          const dispatch = useAppDispatch();
-          dispatch(useLight());
-        },
-      },
-      {
-        name: 'Dark',
-        action: () => {
-          const dispatch = useAppDispatch();
-          dispatch(useDark());
-        },
-      },
+      { name: 'Light', action: () => store.dispatch(setLight()) },
+      { name: 'Dark', action: () => store.dispatch(setDark()) },
     ],
   },
   {
     name: 'Credits',
-    items: [
-      {
-        name: 'tinywind',
-        action: 'open_url',
-        value: 'https://github.com/tinywind',
-        shortcut: '@tinywind',
-      },
-    ],
+    items: [{ name: 'tinywind', action: 'open_url', value: 'https://github.com/tinywind', shortcut: '@tinywind' }],
   },
 ];
 
 if (process.env.NODE_ENV === 'development') {
   navigatorMenus.push({
     name: 'Dev',
-    items: [
-      {
-        name: 'Toogle Developer Tools',
-        action: 'toggle_devtools',
-        shortcut: 'Ctrl+Shift+I',
-      },
-    ],
+    items: [{ name: 'Toogle Developer Tools', action: 'toggle_devtools', shortcut: 'Ctrl+Shift+I' }],
   });
 }
 

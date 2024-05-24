@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import ListPage from '@pages/list';
-import SettingsPage from '@pages/settings';
+import ListPage from '@pages/List';
+import SettingsPage from '@pages/Settings';
 import { createBrowserRouter } from 'react-router-dom';
+import Layout from '@components/Layout';
 
 const ErrorElement = () => {
   useEffect(() => {
@@ -13,17 +14,29 @@ const ErrorElement = () => {
 const router = createBrowserRouter([
   {
     path: '/app_window',
-    element: <ListPage />,
+    element: (
+      <Layout>
+        <ListPage />
+      </Layout>
+    ),
     errorElement: <ErrorElement />,
   },
   {
     path: '/',
-    element: <ListPage />,
+    element: (
+      <Layout>
+        <ListPage />
+      </Layout>
+    ),
     errorElement: <ErrorElement />,
   },
   {
     path: '/settings',
-    element: <SettingsPage />,
+    element: (
+      <Layout>
+        <SettingsPage />
+      </Layout>
+    ),
     errorElement: <ErrorElement />,
   },
 ]);
