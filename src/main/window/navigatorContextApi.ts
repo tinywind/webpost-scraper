@@ -7,11 +7,11 @@
  *
  * @author  : guasam
  * @project : Electron Window
- * @package : Titlebar Context API
+ * @package : Navigator Context API
  */
 
-import { TitlebarContextApi } from './titlebarContext';
+import { NavigatorContextApi } from './navigatorContext';
 
-const context: TitlebarContextApi = (window as any).electron_window?.titlebar;
+const navigator: NavigatorContextApi = (window as any).electron_window?.navigator;
 
-export default context;
+export default navigator;

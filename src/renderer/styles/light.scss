@@ -20,21 +20,21 @@ body:not(.dark-mode) {
   --button-hover-bgcolor: hsl(0, 0%, 98%);
   --button-active-bgcolor: hsl(0, 0%, 96%);
 
-  // Titlebar
-  --titlebar-bgcolor: #fff;
-  --titlebar-color: #1f1f1f;
-  --titlebar-title-color: var(--titlebar-color);
-  --titlebar-menu-title-hover-bgcolor: #e6e6e69e;
-  --titlebar-popup-bgcolor: hsl(0deg 0% 99%);
-  --titlebar-menu-title-active-bgcolor: hsl(0deg 0% 99%);
-  --titlebar-menu-title-active-border-color: #d3d6d8;
-  --titlebar-popup-border: 1px solid #d3d6d8;
-  --titlebar-menu-separator-bgcolor: #d3d6d8;
-  --titlebar-popup-item-name-color: #0e0e0e;
-  --titlebar-popup-item-name-shadow-color: rgba(255, 255, 255, 0.8);
-  --titlebar-popup-item-hover-color: #000000;
-  --titlebar-popup-item-hover-shortcut-color: var(--app-accent-color);
-  --titlebar-popup-item-hover-bgcolor: #d6dadea2;
+  // Navigator
+  --navigator-bgcolor: #fff;
+  --navigator-color: #1f1f1f;
+  --navigator-title-color: var(--navigator-color);
+  --navigator-menu-title-hover-bgcolor: #e6e6e69e;
+  --navigator-popup-bgcolor: hsl(0deg 0% 99%);
+  --navigator-menu-title-active-bgcolor: hsl(0deg 0% 99%);
+  --navigator-menu-title-active-border-color: #d3d6d8;
+  --navigator-popup-border: 1px solid #d3d6d8;
+  --navigator-menu-separator-bgcolor: #d3d6d8;
+  --navigator-popup-item-name-color: #0e0e0e;
+  --navigator-popup-item-name-shadow-color: rgba(255, 255, 255, 0.8);
+  --navigator-popup-item-hover-color: #000000;
+  --navigator-popup-item-hover-shortcut-color: var(--app-accent-color);
+  --navigator-popup-item-hover-bgcolor: #d6dadea2;
 
   // Overrides
   .main-teaser {

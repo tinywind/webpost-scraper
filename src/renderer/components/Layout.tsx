@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import '@styles/app.scss';
-import '@components/icons';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [darkTheme, setDarkTheme] = useState(true);

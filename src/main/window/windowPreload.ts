@@ -1,9 +1,9 @@
 import { contextBridge } from 'electron';
-import titlebarContext from './titlebarContext';
+import navigatorContext from './navigatorContext';
 import utilContext from '@main/window/utilContext';
 
 contextBridge.exposeInMainWorld('electron_window', {
-  titlebar: titlebarContext,
+  navigator: navigatorContext,
 });
 
 contextBridge.exposeInMainWorld('electron_utils', utilContext);

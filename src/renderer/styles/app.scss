@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './dark_theme.scss';
-@import './light_theme.scss';
+@import './dark.scss';
+@import './light.scss';
 
 ::selection {
   background: var(--selection-bgcolor);
@@ -73,11 +73,11 @@ h1 {
 
 /**
  *==========================================================================
- * Titlebar Overrides for different themes
+ * Navigator Overrides for different themes
  *==========================================================================
  */
-.window-titlebar {
-  background: var(--titlebar-bgcolor);
+.window-navigator {
+  background: var(--navigator-bgcolor);
   height: auto;
   overflow: hidden;
 
@@ -90,15 +90,15 @@ h1 {
   }
 
   .window-title {
-    color: var(--titlebar-title-color);
+    color: var(--navigator-title-color);
   }
 
   .menu-item {
     &.active .menu-title {
-      background: var(--titlebar-menu-title-active-bgcolor);
-      box-shadow: var(--titlebar-menu-title-shadow);
-      color: var(--titlebar-color);
-      border-color: var(--titlebar-menu-title-active-border-color);
+      background: var(--navigator-menu-title-active-bgcolor);
+      box-shadow: var(--navigator-menu-title-shadow);
+      color: var(--navigator-color);
+      border-color: var(--navigator-menu-title-active-border-color);
       border-radius: 4px 4px 0 0;
       border-top-color: var(--app-accent-color);
     }
@@ -107,7 +107,7 @@ h1 {
   .menu-title {
     font-weight: normal;
     text-shadow: none;
-    color: var(--titlebar-color);
+    color: var(--navigator-color);
     border-color: transparent;
     border-width: 1px 1px 0 1px;
     border-style: solid;
@@ -116,16 +116,16 @@ h1 {
     border-radius: 4px;
 
     &:hover {
-      background-color: var(--titlebar-menu-title-hover-bgcolor);
+      background-color: var(--navigator-menu-title-hover-bgcolor);
     }
   }
 
   .menu-popup {
     display: none;
     position: fixed;
-    background-color: var(--titlebar-popup-bgcolor);
+    background-color: var(--navigator-popup-bgcolor);
     min-width: 70px;
-    border: var(--titlebar-popup-border);
+    border: var(--navigator-popup-border);
     border-top: 0;
     padding: 0.25rem 0;
     box-shadow: 4px 10px 10px #0000002e;
@@ -136,42 +136,42 @@ h1 {
       padding: 0.3125rem 1rem;
 
       &:hover {
-        background: var(--titlebar-popup-item-hover-bgcolor);
+        background: var(--navigator-popup-item-hover-bgcolor);
 
         .popup-item-shortcut {
-          color: var(--titlebar-popup-item-hover-shortcut-color);
+          color: var(--navigator-popup-item-hover-shortcut-color);
         }
 
         .popup-item-name {
-          color: var(--titlebar-popup-item-hover-color);
+          color: var(--navigator-popup-item-hover-color);
         }
       }
     }
   }
 
   .popup-item-separator {
-    background: var(--titlebar-menu-separator-bgcolor);
+    background: var(--navigator-menu-separator-bgcolor);
   }
 
   .popup-item-name {
     padding-right: 2rem;
-    color: var(--titlebar-popup-item-name-color);
-    text-shadow: 0px 1px var(--titlebar-popup-item-name-shadow-color);
+    color: var(--navigator-popup-item-name-color);
+    text-shadow: 0px 1px var(--navigator-popup-item-name-shadow-color);
   }
 
   .popup-item-shortcut {
-    color: var(--titlebar-popup-item-shortcut-color);
+    color: var(--navigator-popup-item-shortcut-color);
     text-shadow: none;
     letter-spacing: 0.5px;
   }
 
   &-controls.type-windows .control {
-    color: var(--titlebar-color);
+    color: var(--navigator-color);
     font-family: Arial, Helvetica, sans-serif;
 
     &:hover {
-      color: var(--titlebar-color);
-      background: var(--titlebar-popup-item-hover-bgcolor);
+      color: var(--navigator-color);
+      background: var(--navigator-popup-item-hover-bgcolor);
     }
 
     &.close:hover {

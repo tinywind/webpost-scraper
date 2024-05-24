@@ -1,0 +1,7 @@
+pnpm-lock.yaml
+*.md
+*.lock
+.idea
+assets
+node_modules
+out

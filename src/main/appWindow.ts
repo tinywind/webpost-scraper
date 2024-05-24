@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { registerTitlebarIpc } from '@main/window/titlebarIpc';
+import { registerNavigatorIpc } from '@main/window/navigatorIpc';
 import { registerUtilIpc } from '@main/window/utilIpc';
 
 // Electron Forge automatically creates these entry points
@@ -48,6 +48,6 @@ export function createAppWindow(): BrowserWindow {
 }
 
 function registerMainIPC() {
-  registerTitlebarIpc(appWindow);
+  registerNavigatorIpc(appWindow);
   registerUtilIpc();
 }

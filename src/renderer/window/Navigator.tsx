@@ -7,16 +7,16 @@
  *
  * @author  : guasam
  * @project : Electron Window
- * @package : Window Titlebar (Component)
+ * @package : Window Navigator (Component)
  */
 
 import React, { createRef, useContext, useEffect, useRef, useState } from 'react';
-import titlebarMenus from '@main/window/titlebarMenus';
+import navigatorMenus from '@main/window/navigatorMenus';
 import classNames from 'classnames';
 import WindowControls from './WindowControls';
-import context from '@main/window/titlebarContextApi';
+import navigator from '@main/window/navigatorContextApi';
 import { WindowContext } from './WindowFrame';
-import './titlebar.scss';
+import '@renderer/styles/navigator.scss';
 
 type Props = {
   title: string;
@@ -24,9 +24,9 @@ type Props = {
   icon?: string;
 };
 
-const Titlebar: React.FC<Props> = props => {
+const Navigator: React.FC<Props> = props => {
   const activeMenuIndex = useRef<number | null>(null);
-  const menusRef = titlebarMenus.map(() => createRef<HTMLDivElement>());
+  const menusRef = navigatorMenus.map(() => createRef<HTMLDivElement>());
   const [menusVisible, setMenusVisible] = useState(true);
   const windowContext = useContext(WindowContext);
 
@@ -106,60 +106,58 @@ const Titlebar: React.FC<Props> = props => {
 
   function handleAction(action?: string, value?: string | number) {
     closeActiveMenu();
-    const c: Record<string, CallableFunction> = context;
+    const c: Record<string, CallableFunction> = navigator;
     if (action) {
       if (typeof c[action] === 'function') {
         c[action](value);
       } else {
-        console.log(`action [${action}] is not available in titlebar context`);
+        console.log(`action [${action}] is not available in navigator context`);
       }
     }
   }
 
   return (
-    <div className='window-titlebar'>
+    <div className='window-navigator'>
       {props.icon ? (
-        <section className='window-titlebar-icon'>
-          <img src={props.icon} alt='titlebar icon' />
+        <section className='window-navigator-icon'>
+          <img src={props.icon} alt='navigator icon' />
         </section>
       ) : (
         ''
       )}
 
       <section
-        className={classNames('window-titlebar-content', {
+        className={classNames('window-navigator-content', {
           centered: props.mode === 'centered-title',
         })}>
         {menusVisible ? '' : <div className='window-title'>{props.title}</div>}
       </section>
 
       <section
-        className={classNames('window-titlebar-menu', {
+        className={classNames('window-navigator-menu', {
           hidden: !menusVisible,
         })}>
-        {titlebarMenus.map((item, menuIndex) => {
+        {navigatorMenus.map((item, menuIndex) => {
           return (
             <div className='menu-item' key={`menu_${menuIndex}`}>
               <div className='menu-title' onClick={e => showMenu(menuIndex, e)} onMouseEnter={() => onMenuHover(menuIndex)} onMouseDown={e => e.preventDefault()}>
                 {item.name}
               </div>
               <div className='menu-popup' ref={menusRef[menuIndex]}>
-                {item.items?.map((menuItem, menuItemIndex) => {
-                  if (menuItem.name === '__') {
-                    return <div key={`menu_${menuIndex}_popup_item_${menuItemIndex}`} className='popup-item-separator'></div>;
-                  }
-
-                  return (
+                {item.items?.map((menuItem, menuItemIndex) =>
+                  menuItem.name === '__' ? (
+                    <div key={`menu_${menuIndex}_popup_item_${menuItemIndex}`} className='popup-item-separator' />
+                  ) : (
                     <div
                       key={`menu_${menuIndex}_popup_item_${menuItemIndex}`}
                       className='menu-popup-item'
-                      onClick={() => handleAction(menuItem.action, menuItem.value)}
+                      onClick={() => (typeof menuItem.action === 'function' ? (menuItem.action(menuItem.value), closeActiveMenu()) : handleAction(menuItem.action, menuItem.value))}
                       onMouseDown={e => e.preventDefault()}>
                       <div className='popup-item-name'>{menuItem.name}</div>
                       <div className='popup-item-shortcut'>{menuItem.shortcut}</div>
                     </div>
-                  );
-                })}
+                  ),
+                )}
               </div>
             </div>
           );
@@ -171,4 +169,4 @@ const Titlebar: React.FC<Props> = props => {
   );
 };
 
-export default Titlebar;
+export default Navigator;

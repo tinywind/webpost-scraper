@@ -1,21 +1,21 @@
-$titlebar-baseSize: 16px;
-$titlebar-height: 28px;
-$titlebar-bg: #171b21;
-$titlebar-iconSize: 16px;
-$em: $titlebar-baseSize * 1em;
+$navigator-baseSize: 16px;
+$navigator-height: 28px;
+$navigator-bg: #171b21;
+$navigator-iconSize: 16px;
+$em: $navigator-baseSize * 1em;
 
 /*
 |--------------------------------------------------------------------------
-| Window Titlebar
+| Window Navigator
 |--------------------------------------------------------------------------
 */
 
-.window-titlebar {
+.window-navigator {
   display: flex;
   align-items: stretch;
-  font-size: $titlebar-baseSize;
-  height: $titlebar-height;
-  background: $titlebar-bg;
+  font-size: $navigator-baseSize;
+  height: $navigator-height;
+  background: $navigator-bg;
   -webkit-app-region: drag;
   user-select: none;
   position: relative;
@@ -27,7 +27,7 @@ $em: $titlebar-baseSize * 1em;
 
   &-content {
     flex: 1;
-    font-size: calc($titlebar-baseSize - 3px);
+    font-size: calc($navigator-baseSize - 3px);
     color: #a9b0bb;
 
     &.centered {
@@ -42,8 +42,8 @@ $em: $titlebar-baseSize * 1em;
     padding: 0 0.75em;
 
     img {
-      width: $titlebar-iconSize;
-      height: $titlebar-iconSize;
+      width: $navigator-iconSize;
+      height: $navigator-iconSize;
     }
   }
 
@@ -68,11 +68,11 @@ $em: $titlebar-baseSize * 1em;
 
 /*
 |--------------------------------------------------------------------------
-| Titlebar Menu
+| Navigator Menu
 |--------------------------------------------------------------------------
 */
 
-.window-titlebar .menu {
+.window-navigator .menu {
   flex: 1;
 
   &-item {
@@ -132,11 +132,11 @@ $em: $titlebar-baseSize * 1em;
 
 /*
 |--------------------------------------------------------------------------
-| Titlebar Controls (Max, Min, Close)
+| Navigator Controls (Max, Min, Close)
 |--------------------------------------------------------------------------
 */
 
-.window-titlebar-controls {
+.window-navigator-controls {
   display: flex;
   align-items: stretch;
   position: absolute;

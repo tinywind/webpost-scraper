@@ -12,7 +12,7 @@
 
 import classNames from 'classnames';
 import React from 'react';
-import context from '@main/window/titlebarContextApi';
+import navigator from '@main/window/navigatorContextApi';
 
 import ControlButton from './ControlButton';
 
@@ -27,10 +27,10 @@ const minimizePath = 'M 0,5 10,5 10,6 0,6 Z';
 
 const WindowControls: React.FC<Props> = props => {
   return (
-    <section className={classNames('window-titlebar-controls', `type-${props.platform}`)}>
-      <ControlButton name='minimize' onClick={() => context.minimize()} path={minimizePath} title={props.tooltips ? 'Minimize' : null} />
-      <ControlButton name='maximize' onClick={() => context.toggle_maximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : null} />
-      <ControlButton name='close' onClick={() => context.exit()} path={closePath} title={props.tooltips ? 'Close' : null} />
+    <section className={classNames('window-navigator-controls', `type-${props.platform}`)}>
+      <ControlButton name='minimize' onClick={() => navigator.minimize()} path={minimizePath} title={props.tooltips ? 'Minimize' : null} />
+      <ControlButton name='maximize' onClick={() => navigator.toggle_maximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : null} />
+      <ControlButton name='close' onClick={() => navigator.exit()} path={closePath} title={props.tooltips ? 'Close' : null} />
     </section>
   );
 };

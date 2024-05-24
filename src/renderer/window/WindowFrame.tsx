@@ -11,7 +11,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import Titlebar from './Titlebar';
+import Navigator from './Navigator';
 import logo from '@assets/images/logo.png';
 
 type Props = {
@@ -47,8 +47,8 @@ const WindowFrame: React.FC<Props> = props => {
     <WindowContext.Provider value={{ platform: props.platform }}>
       {/* Reference creator */}
       <div className='start-electron-window' ref={itsRef}></div>
-      {/* Window Titlebar */}
-      <Titlebar title={props.title ?? 'Electron Window'} mode='centered-title' icon={logo} />
+      {/* Window Navigator */}
+      <Navigator title={props.title ?? 'Electron Window'} mode='centered-title' icon={logo} />
       {/* Window Content (Application to render) */}
       <div className='window-content'>{props.children}</div>
     </WindowContext.Provider>

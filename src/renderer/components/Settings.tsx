@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Site } from '../types';
-import CrawlerModal, { Data } from '@renderer/modals/CrawlerModal';
+import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';
 import { load } from 'cheerio';
@@ -8,11 +8,45 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 
-const CrawlerSettings: React.FC<{ sites: Site[] }> = ({ sites }) => {
+const Settings: React.FC = () => {
   const [url, setUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sites, setSites] = useState<Site[]>([]);
   const [siteData, setSiteData] = useState<Data | null>(null);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
+    setSites([
+      {
+        id: uuid(),
+        name: 'Google',
+        url: 'https://google.com',
+        favicon: 'https://www.google.com/favicon.ico',
+        titleSelector: {
+          selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
+          property: 'innerText',
+        },
+        urlSelector: {
+          selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
+          property: 'href',
+        },
+      },
+      {
+        id: uuid(),
+        name: 'Yahoo',
+        url: 'https://yahoo.com',
+        favicon: 'https://www.yahoo.com/favicon.ico',
+        titleSelector: {
+          selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
+          property: 'innerText',
+        },
+        urlSelector: {
+          selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
+          property: 'href',
+        },
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return;
@@ -28,7 +62,7 @@ const CrawlerSettings: React.FC<{ sites: Site[] }> = ({ sites }) => {
       alert('Please enter a URL');
       return;
     }
-    setIsLoading(true);
+    setLoading(true);
     try {
       const result = await util.fetchSiteData(url);
 
@@ -41,14 +75,13 @@ const CrawlerSettings: React.FC<{ sites: Site[] }> = ({ sites }) => {
           favicon = `${urlObject.origin}/${favicon}`;
         }
         setSiteData({ id: uuid(), name: title ?? url, url, html: result.html, favicon });
-        setOpenModal(true);
       } else {
         alert(`Failed to fetch site data: ${result.statusText}`);
       }
     } catch (error) {
       alert('Failed to load the page: ' + error.message);
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   return (
@@ -57,9 +90,9 @@ const CrawlerSettings: React.FC<{ sites: Site[] }> = ({ sites }) => {
         <div className='max-w-2xl mx-auto'>
           <h1 className='text-md font-bold text-gray-700 mb-2'>Crawler Settings</h1>
           <div className='flex gap-1 mb-2'>
-            <input type='text' value={url} onChange={handleUrlChange} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
+            <input value={url} onChange={handleUrlChange} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
             <button onClick={fetchSiteData} className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm min-w-0'>
-              {isLoading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
+              {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
             </button>
           </div>
           {sites.map((site, index) => (
@@ -67,7 +100,7 @@ const CrawlerSettings: React.FC<{ sites: Site[] }> = ({ sites }) => {
           ))}
         </div>
       </div>
-      {siteData && <CrawlerModal open={openModal} closeModal={() => setOpenModal(false)} data={siteData} />}
+      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} />}
     </>
   );
 };
@@ -89,4 +122,4 @@ const SiteItem: React.FC<{ site: Site }> = ({ site }) => {
   );
 };
 
-export default CrawlerSettings;
+export default Settings;
