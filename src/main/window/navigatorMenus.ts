@@ -1,4 +1,6 @@
 import router from '@renderer/router';
+import { useAppDispatch } from '@renderer/contexts/store';
+import { useDark, useLight } from '@renderer/contexts/themeSlice';
 
 export type MenuItem = {
   name: string;
@@ -27,6 +29,25 @@ const navigatorMenus: Menu[] = [
       {
         name: 'Settings',
         action: () => router.navigate('/settings'),
+      },
+    ],
+  },
+  {
+    name: 'Theme',
+    items: [
+      {
+        name: 'Light',
+        action: () => {
+          const dispatch = useAppDispatch();
+          dispatch(useLight());
+        },
+      },
+      {
+        name: 'Dark',
+        action: () => {
+          const dispatch = useAppDispatch();
+          dispatch(useDark());
+        },
       },
     ],
   },

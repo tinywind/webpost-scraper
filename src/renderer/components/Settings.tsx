@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 
-const Settings: React.FC = () => {
+export default function Settings() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [sites, setSites] = useState<Site[]>([]);
@@ -62,8 +62,8 @@ const Settings: React.FC = () => {
       alert('Please enter a URL');
       return;
     }
-    setLoading(true);
     try {
+      setLoading(true);
       const result = await util.fetchSiteData(url);
 
       if (result.ok) {
@@ -80,8 +80,9 @@ const Settings: React.FC = () => {
       }
     } catch (error) {
       alert('Failed to load the page: ' + error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -91,7 +92,7 @@ const Settings: React.FC = () => {
           <h1 className='text-md font-bold text-gray-700 mb-2'>Crawler Settings</h1>
           <div className='flex gap-1 mb-2'>
             <input value={url} onChange={handleUrlChange} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
-            <button onClick={fetchSiteData} className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm min-w-0'>
+            <button disabled={loading} onClick={fetchSiteData} className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm min-w-0'>
               {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
             </button>
           </div>
@@ -100,10 +101,10 @@ const Settings: React.FC = () => {
           ))}
         </div>
       </div>
-      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} />}
+      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} addSite={(site: Site) => setSites([...sites, site])} />}
     </>
   );
-};
+}
 
 const SiteItem: React.FC<{ site: Site }> = ({ site }) => {
   return (
@@ -121,5 +122,3 @@ const SiteItem: React.FC<{ site: Site }> = ({ site }) => {
     </div>
   );
 };
-
-export default Settings;

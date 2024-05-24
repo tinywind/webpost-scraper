@@ -5,11 +5,14 @@ import util from '@main/window/utilContextApi';
 import moment from 'moment';
 import AppModal from '@components/AppModal';
 import navigator from '@main/window/navigatorContextApi';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 export type Data = Site & { html?: string };
 const DEFAULT_PROPERTY = 'textContent';
 
-export default function SiteModal({ closeModal, data }: { closeModal: () => void; data: Data }) {
+export default function SiteModal({ closeModal, data, addSite }: { closeModal: () => void; data: Data; addSite: (site: Site) => void }) {
   const [selectors, setSelectors] = useState<{
     article: Selector;
     title: Selector;
@@ -22,6 +25,7 @@ export default function SiteModal({ closeModal, data }: { closeModal: () => void
     date: { selector: '', property: '', regex: '' },
   });
   const [previewData, setPreviewData] = useState<Array<Post>>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -50,33 +54,44 @@ export default function SiteModal({ closeModal, data }: { closeModal: () => void
   };
 
   const fetchPreview = async () => {
-    const result = await util.fetchSiteData(data.url);
-    const $ = load(result.html);
-    setPreviewData(
-      $(selectors.article.selector)
-        .toArray()
-        .map(article => {
-          const article$ = load($.html(article));
-          const title = article$(selectors.title.selector);
-          const url = article$(selectors.link.selector);
-          const date = article$(selectors.date.selector);
-          const titleProp = title.prop(selectors.title.property || DEFAULT_PROPERTY);
-          const urlProp = url.prop(selectors.link.property || DEFAULT_PROPERTY);
-          const dateProp = date.prop(selectors.date.property || DEFAULT_PROPERTY);
-          return {
-            site: data,
-            title: titleProp?.match(new RegExp(selectors.title.regex))?.[0] || titleProp,
-            url: urlProp?.match(new RegExp(selectors.link.regex))?.[0] || urlProp,
-            createdAt: dateProp?.match(new RegExp(selectors.date.regex))?.[0] || dateProp,
-            read: false,
-            marked: false,
-          };
-        }),
-    );
+    try {
+      setLoading(true);
+      const result = await util.fetchSiteData(data.url);
+      const $ = load(result.html);
+      setPreviewData(
+        $(selectors.article.selector)
+          .toArray()
+          .map(article => {
+            const article$ = load($.html(article));
+            const title = article$(selectors.title.selector);
+            const url = article$(selectors.link.selector);
+            const date = article$(selectors.date.selector);
+            const titleProp = title.prop(selectors.title.property || DEFAULT_PROPERTY);
+            const urlProp = url.prop(selectors.link.property || DEFAULT_PROPERTY);
+            const dateProp = date.prop(selectors.date.property || DEFAULT_PROPERTY);
+            return {
+              site: data,
+              title: titleProp?.match(new RegExp(selectors.title.regex))?.[0] || titleProp,
+              url: urlProp?.match(new RegExp(selectors.link.regex))?.[0] || urlProp,
+              createdAt: dateProp?.match(new RegExp(selectors.date.regex))?.[0] || dateProp,
+              read: false,
+              marked: false,
+            };
+          }),
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const apply = () => {
-    alert('Apply');
+    addSite({
+      ...data,
+      articleSelector: selectors.article.selector,
+      titleSelector: selectors.title,
+      urlSelector: selectors.link,
+      createdAtSelector: selectors.date,
+    });
     closeModal();
   };
 
@@ -132,10 +147,12 @@ export default function SiteModal({ closeModal, data }: { closeModal: () => void
         {InputFields('link', ['selector', 'property', 'regex'])}
         {InputFields('date', ['selector', 'property', 'regex'])}
       </div>
-      <button onClick={fetchPreview} className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'>
-        미리보기
-      </button>
-      <div className='mt-4 overflow-auto max-h-60'>
+      <div className='text-center'>
+        <button disabled={loading} onClick={fetchPreview} className='text-sm px-4 py-1 bg-gray-500 text-white rounded hover:bg-gray-600'>
+          {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faEye} />}
+        </button>
+      </div>
+      <div className='mt-4'>
         {previewData.map((item, index) => (
           <a
             key={index}
