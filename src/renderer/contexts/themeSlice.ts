@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import util from '@main/window/utilContextApi';
+import util from '@main/window/utilContext';
 
 const KEY = 'dark-mode';
 const THEME_DARK = 'dark';

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Site } from '@renderer/types';
 import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
-import util from '@main/window/utilContextApi';
+import util from '@main/window/utilContext';
 import { load } from 'cheerio';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch, faTrashCan, faUpload } from '@fortawesome/free-solid-svg-icons';
