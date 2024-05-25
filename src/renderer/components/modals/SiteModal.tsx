@@ -19,39 +19,13 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
     link: Selector;
     date: Selector;
   }>({
-    article: { selector: '', property: '', regex: '' },
-    title: { selector: '', property: '', regex: '' },
-    link: { selector: '', property: '', regex: '' },
-    date: { selector: '', property: '', regex: '' },
+    article: { selector: data.articleSelector || '', property: '', regex: '' },
+    title: { selector: data.titleSelector?.selector || '', property: data.titleSelector?.property || '', regex: data.titleSelector?.regex || '' },
+    link: { selector: data.urlSelector?.selector || '', property: data.urlSelector?.property || '', regex: data.urlSelector?.regex || '' },
+    date: { selector: data.createdAtSelector?.selector || '', property: data.createdAtSelector?.property || '', regex: data.createdAtSelector?.regex || '' },
   });
   const [previewData, setPreviewData] = useState<Array<Post>>([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    setSelectors({
-      article: { selector: '', property: '', regex: '' },
-      title: { selector: '', property: '', regex: '' },
-      link: { selector: '', property: '', regex: '' },
-      date: { selector: '', property: '', regex: '' },
-    });
-    setPreviewData([]);
-
-    if (process.env.NODE_ENV !== 'development') return;
-    setSelectors({
-      article: { selector: 'a.item', property: '', regex: '' },
-      title: { selector: '.title', property: 'innerText', regex: '' },
-      link: { selector: 'a.item', property: 'href', regex: '' },
-      date: { selector: '.etc > div:last-child', property: '', regex: '' },
-    });
-  }, [open]);
-
-  const handleInputChange = (field: 'article' | 'title' | 'link' | 'date', subfield: 'selector' | 'property' | 'regex', value: string) => {
-    setSelectors({
-      ...selectors,
-      [field]: { ...selectors[field], [subfield]: value },
-    });
-  };
 
   const fetchPreview = async () => {
     try {
@@ -104,7 +78,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
             key={subfield}
             placeholder={subfield.charAt(0).toUpperCase() + subfield.slice(1)}
             value={selectors[field][subfield as 'selector' | 'property' | 'regex']}
-            onChange={e => handleInputChange(field, subfield as 'selector' | 'property' | 'regex', e.target.value)}
+            onChange={e => setSelectors({ ...selectors, [field]: { ...selectors[field], [subfield]: e.target.value } })}
             className='flex-1 p-1 border rounded text-sm'
           />
         ))}

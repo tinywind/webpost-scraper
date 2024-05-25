@@ -29,3 +29,26 @@ export type Selector = {
   property: string; // dom property (ex: href, src, innerText, textContent) refer to: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
   regex?: string; // regex to apply to the property
 };
+
+export const cloneSite = (site: Site) => ({
+  id: site.id,
+  name: site.name,
+  url: site.url,
+  favicon: site.favicon,
+  articleSelector: site.articleSelector,
+  titleSelector: {
+    selector: site.titleSelector.selector,
+    property: site.titleSelector.property,
+    regex: site.titleSelector.regex,
+  },
+  urlSelector: {
+    selector: site.urlSelector.selector,
+    property: site.urlSelector.property,
+    regex: site.urlSelector.regex,
+  },
+  createdAtSelector: {
+    selector: site.createdAtSelector.selector,
+    property: site.createdAtSelector.property,
+    regex: site.createdAtSelector.regex,
+  },
+});

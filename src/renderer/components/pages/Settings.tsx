@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Site } from '@src/types';
+import { cloneSite, Site } from '@src/types';
 import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';
@@ -8,31 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch, faTrashCan, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
-import { setPollingInterval, setRetention, save, addSite, deleteSite } from '@renderer/contexts/settingSlice';
+import { setPollingInterval, setRetention, save, addSite, deleteSite, updateSite } from '@renderer/contexts/settingSlice';
 import { error, success, warning } from '@renderer/utils/swals';
-
-const cloneSite = (site: Site) => ({
-  id: site.id,
-  name: site.name,
-  url: site.url,
-  favicon: site.favicon,
-  articleSelector: site.articleSelector,
-  titleSelector: {
-    selector: site.titleSelector.selector,
-    property: site.titleSelector.property,
-    regex: site.titleSelector.regex,
-  },
-  urlSelector: {
-    selector: site.urlSelector.selector,
-    property: site.urlSelector.property,
-    regex: site.urlSelector.regex,
-  },
-  createdAtSelector: {
-    selector: site.createdAtSelector.selector,
-    property: site.createdAtSelector.property,
-    regex: site.createdAtSelector.regex,
-  },
-});
+import Loader from '@components/Loader';
 
 export default function Settings() {
   const [url, setUrl] = useState('');
@@ -53,7 +31,7 @@ export default function Settings() {
     setUrl('https://1bang.kr/ticket-deal');
   }, []);
 
-  const fetchSiteData = async () => {
+  const loadSiteData = async (url: string, site?: Site) => {
     if (!url) {
       warning('Please enter a URL');
       return;
@@ -70,7 +48,9 @@ export default function Settings() {
           const urlObject = new URL(url);
           favicon = `${urlObject.origin}/${favicon}`;
         }
-        setSiteData({ id: uuid(), name: title ?? url, url, html: result.html, favicon });
+
+        if (!site) setSiteData({ id: uuid(), name: title ?? url, url, html: result.html, favicon });
+        else setSiteData({ ...site, html: result.html });
       } else {
         error(`Failed to fetch site data: ${result.statusText}`);
       }
@@ -109,7 +89,9 @@ export default function Settings() {
       <div key={site.id} className='flex justify-between items-center border-b border-gray-300 p-2 mb-2'>
         {site.favicon && <img src={site.favicon} alt='favicon' className='w-5 h-5 mr-4' />}
         <div className='flex-1 w-3/4'>
-          <span className='text-md font-medium'>{site.name}</span>
+          <a onClick={() => loadSiteData(site.url, site)} className='text-md font-medium'>
+            {site.name}
+          </a>
           <div className='flex items-center text-xs text-gray-500'>
             <span className='truncate'>{site.url}</span>
           </div>
@@ -175,7 +157,7 @@ export default function Settings() {
 
           <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
             <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
-            <button disabled={loading} onClick={fetchSiteData} className='button'>
+            <button disabled={loading} onClick={() => loadSiteData(url)} className='button'>
               {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
             </button>
           </div>
@@ -184,7 +166,22 @@ export default function Settings() {
           ))}
         </div>
       </div>
-      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} addSite={(site: Site) => (setSites([...sites, site]), dispatch(addSite({ site })))} />}
+      {siteData && (
+        <SiteModal
+          closeModal={() => setSiteData(null)}
+          data={siteData}
+          addSite={(site: Site) => {
+            if (sites.find(s => s.id === site.id)) {
+              setSites(sites.map(s => (s.id === site.id ? site : s)));
+              dispatch(updateSite({ id: site.id, site }));
+            } else {
+              setSites([...sites, site]);
+              dispatch(addSite({ site }));
+            }
+          }}
+        />
+      )}
+      {loading && <Loader />}
     </>
   );
 }

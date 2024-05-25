@@ -6,6 +6,15 @@ module.exports = {
   darkMode: 'media',
   theme: {
     extend: {
+      keyframes: {
+        spin: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        'spin-slow': 'spin 1s linear infinite',
+      },
       boxShadow: {
         custom: '0 2px 4px rgba(0, 0, 0, 0.05)',
       },

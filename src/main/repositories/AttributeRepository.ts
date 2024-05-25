@@ -18,19 +18,27 @@ class AttributeRepository {
   }
 
   async save(pollingInterval: number, retention: number) {
-    await this.attributeRepository.clear();
-    return await this.attributeRepository.insert([
-      { key: 'pollingInterval', value: pollingInterval },
-      { key: 'retention', value: retention },
-    ]);
+    await this.setPollingInterval(pollingInterval);
+    await this.setRetention(retention);
   }
 
   async setPollingInterval(pollingInterval: number) {
-    return await this.attributeRepository.update('pollingInterval', { key: 'pollingInterval', value: pollingInterval });
+    const e = { key: 'pollingInterval', value: pollingInterval };
+    if (pollingInterval < 1) throw new Error('Polling interval must be greater than 0');
+    if (await this.attributeRepository.find('pollingInterval')) {
+      return await this.attributeRepository.update(e.key, e);
+    } else {
+      return await this.attributeRepository.insert(e);
+    }
   }
 
   async setRetention(retention: number) {
-    return await this.attributeRepository.update('retention', { key: 'retention', value: retention });
+    const e = { key: 'retention', value: retention };
+    if (await this.attributeRepository.find('retention')) {
+      return await this.attributeRepository.update(e.key, e);
+    } else {
+      return await this.attributeRepository.insert(e);
+    }
   }
 }
 
