@@ -29,6 +29,9 @@ importers:
       electron-squirrel-startup:
         specifier: 1.0.1
         version: 1.0.1
+      jsstore:
+        specifier: ^4.7.4
+        version: 4.7.4
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -2420,6 +2423,9 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
+
+  jsstore@4.7.4:
+    resolution: {integrity: sha512-uS71ixKmBikkeTU6rYOtasWeatdrv6IczwyN+KszFuY43DDxyjVDIZ0prQ8M3a4ikfLsE5+kGJwmeGWBi2YMlg==}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -6959,6 +6965,8 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+
+  jsstore@4.7.4: {}
 
   jsx-ast-utils@3.3.5:
     dependencies:

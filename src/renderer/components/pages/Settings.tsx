@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Site } from '../types';
+import { Site } from '@renderer/types';
 import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';

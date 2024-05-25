@@ -85,6 +85,7 @@
     "@types/uuid": "^9.0.8",
     "cheerio": "1.0.0-rc.12",
     "electron-squirrel-startup": "1.0.1",
+    "jsstore": "^4.7.4",
     "moment": "^2.30.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
