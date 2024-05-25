@@ -20,12 +20,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.2.5
         version: 2.2.5(react-redux@9.1.2(@types/react@18.3.2)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
-      '@types/uuid':
-        specifier: ^9.0.8
-        version: 9.0.8
-      add:
-        specifier: ^2.0.6
-        version: 2.0.6
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -77,6 +71,9 @@ importers:
       sweetalert2-react-content:
         specifier: ^5.0.7
         version: 5.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sweetalert2@11.11.0)
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
     devDependencies:
       '@electron-forge/cli':
         specifier: 7.4.0
@@ -123,6 +120,9 @@ importers:
       '@types/redux-logger':
         specifier: ^3.0.13
         version: 3.0.13
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
       '@types/webpack-env':
         specifier: 1.18.5
         version: 1.18.5
@@ -830,9 +830,6 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  add@2.0.6:
-    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
 
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -3930,6 +3927,10 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
 
@@ -5066,8 +5067,6 @@ snapshots:
       acorn: 8.11.3
 
   acorn@8.11.3: {}
-
-  add@2.0.6: {}
 
   agent-base@6.0.2:
     dependencies:
@@ -8501,6 +8500,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@8.3.2: {}
+
+  uuid@9.0.1: {}
 
   validate-npm-package-license@3.0.4:
     dependencies:
