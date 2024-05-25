@@ -164,7 +164,7 @@ export default function Settings() {
               sites.filter(s => s.id !== site.id),
             )
           )}
-          className='min-w-0 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm'>
+          className='button icon'>
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
@@ -178,11 +178,11 @@ export default function Settings() {
           <div className='flex justify-between items-center mb-2'>
             <h1 className='text-md font-bold text-gray-700'>Crawler Settings</h1>
             <div className='flex gap-2'>
-              <button onClick={exportSettings} className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm'>
+              <button onClick={exportSettings} className='button icon'>
                 <FontAwesomeIcon icon={faDownload} />
               </button>
               <input type='file' onChange={importSettings} className='hidden' id='file-upload' />
-              <label htmlFor='file-upload' className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm cursor-pointer'>
+              <label htmlFor='file-upload' className='button icon'>
                 <FontAwesomeIcon icon={faUpload} />
               </label>
             </div>
@@ -200,10 +200,7 @@ export default function Settings() {
                 { value: 720, label: '12 hours' },
                 { value: 1440, label: '1 day' },
               ].map((e, index) => (
-                <button
-                  key={index}
-                  onClick={() => (setPollingInterval(e.value), save(e.value, retention, sites))}
-                  className={`px-2 py-1 text-sm rounded ${pollingInterval === e.value ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                <button key={index} onClick={() => (setPollingInterval(e.value), save(e.value, retention, sites))} className={`button ${pollingInterval === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
@@ -216,18 +213,16 @@ export default function Settings() {
                 { value: 7, label: '7 days' },
                 { value: 14, label: '14 days' },
               ].map((e, index) => (
-                <button
-                  key={index}
-                  onClick={() => (setRetention(e.value), save(pollingInterval, e.value, sites))}
-                  className={`px-2 py-1 text-sm rounded ${retention === e.value ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                <button key={index} onClick={() => (setRetention(e.value), save(pollingInterval, e.value, sites))} className={`button ${retention === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
             </div>
           </div>
-          <div className='flex gap-1 mb-2'>
+
+          <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
             <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
-            <button disabled={loading} onClick={fetchSiteData} className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm min-w-0'>
+            <button disabled={loading} onClick={fetchSiteData} className='button'>
               {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
             </button>
           </div>

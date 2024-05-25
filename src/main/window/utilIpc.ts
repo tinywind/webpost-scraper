@@ -1,4 +1,4 @@
-import { dialog, ipcMain, net } from 'electron';
+import { dialog, ipcMain, net, nativeTheme } from 'electron';
 import { Setting } from '@renderer/types';
 
 export type FetchResult = {
@@ -45,5 +45,28 @@ export const registerUtilIpc = () => {
           require('fs').writeFileSync(filePath, string);
         }
       });
+  });
+
+  ipcMain.handle('dark-mode:dark', () => {
+    nativeTheme.themeSource = 'dark';
+    return nativeTheme.shouldUseDarkColors;
+  });
+
+  ipcMain.handle('dark-mode:light', () => {
+    nativeTheme.themeSource = 'light';
+    return nativeTheme.shouldUseDarkColors;
+  });
+
+  ipcMain.handle('dark-mode:toggle', () => {
+    if (nativeTheme.shouldUseDarkColors) {
+      nativeTheme.themeSource = 'light';
+    } else {
+      nativeTheme.themeSource = 'dark';
+    }
+    return nativeTheme.shouldUseDarkColors;
+  });
+
+  ipcMain.handle('dark-mode:system', () => {
+    nativeTheme.themeSource = 'system';
   });
 };

@@ -9,6 +9,18 @@ const utilContext = {
   exportSettings: async (setting: Setting) => {
     await ipcRenderer.invoke('export-settings', setting);
   },
+  setDarkMode: async () => {
+    return await ipcRenderer.invoke('dark-mode:dark');
+  },
+  setLightMode: async () => {
+    return await ipcRenderer.invoke('dark-mode:light');
+  },
+  toggleDarkMode: async () => {
+    return await ipcRenderer.invoke('dark-mode:toggle');
+  },
+  systemDarkMode: async () => {
+    return await ipcRenderer.invoke('dark-mode:system');
+  },
 };
 
 export type UtilContextApi = typeof utilContext;

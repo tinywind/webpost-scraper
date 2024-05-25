@@ -1,0 +1,136 @@
+.window-navigator {
+  @apply flex items-stretch text-sm select-none relative h-auto overflow-hidden;
+  background-color: var(--navigator-bgcolor);
+  -webkit-app-region: drag;
+
+  & > section {
+    @apply flex items-center;
+  }
+  .popup-item-name {
+    @apply pr-8;
+    color: var(--navigator-popup-item-name-color);
+  }
+  .popup-item-shortcut {
+    @apply shadow-none;
+    color: var(--navigator-popup-item-shortcut-color);
+  }
+  .popup-item-separator {
+    @apply h-px my-1;
+    background-color: var(--navigator-menu-separator-bgcolor);
+  }
+
+  .window-title {
+    color: var(--navigator-title-color);
+  }
+
+  .menu {
+    @apply flex-1;
+  }
+
+  .menu-item {
+    @apply relative min-w-16 text-center;
+
+    &.active {
+      .menu-title {
+        @apply overflow-hidden;
+        background-color: var(--navigator-menu-title-active-bgcolor);
+        box-shadow: var(--navigator-menu-title-shadow);
+        color: var(--navigator-color);
+        /*border-color: var(--navigator-menu-title-active-border-color);*/
+        border-top-color: var(--app-accent-color);
+        border-radius: theme('width.1') theme('width.1') 0 0;
+      }
+    }
+    &:hover {
+      /*@apply bg-blue-700;*/
+    }
+  }
+
+  .menu-title {
+    @apply font-normal py-1 px-2 text-sm border border-transparent no-drag mr-0.5;
+    text-shadow: 0 1px 1px var(--navigator-menu-title-shadow-color);
+    color: var(--navigator-color);
+    border-width: 1px 1px 0 1px;
+    border-radius: 4px;
+    &:hover {
+      background-color: var(--navigator-menu-title-hover-bgcolor);
+    }
+  }
+
+  .menu-popup {
+    @apply hidden fixed border py-1 px-0 z-50 min-w-24 border-t-0;
+    background-color: var(--navigator-popup-bgcolor);
+    border-color: var(--navigator-popup-border);
+    box-shadow: var(--navigator-popup-shadow);
+    z-index: 10000;
+    border-radius: 0 6px 6px 6px;
+
+    &.active {
+      @apply block;
+    }
+  }
+  .menu-popup-item {
+    @apply flex justify-between text-sm  py-2 px-4;
+
+    &:hover {
+      background-color: var(--navigator-popup-item-hover-bgcolor);
+
+      .popup-item-shortcut {
+        color: var(--navigator-popup-item-hover-shortcut-color);
+      }
+    }
+  }
+}
+
+.window-navigator-controls {
+  @apply flex items-stretch absolute right-0 top-0 bottom-0;
+  color: var(--navigator-popup-item-hover-color);
+
+  &.type-windows {
+    .control {
+      @apply px-4 text-sm flex h-full items-center no-drag;
+
+      &.close:hover {
+        background-color: var(--navigator-popup-item-hover-bgcolor);
+      }
+
+      &:hover {
+        background-color: var(--navigator-popup-item-hover-bgcolor);
+        color: var(--navigator-popup-item-hover-color);
+      }
+    }
+  }
+
+  &.type-mac {
+    .control {
+      @apply w-4 h-4 rounded-full flex items-center justify-center mr-2 no-drag opacity-80;
+      background-color: var(--navigator-bgcolor);
+
+      &:hover {
+        @apply opacity-100;
+      }
+      &.close {
+        @apply bg-red-500;
+      }
+      &.maximize {
+        @apply bg-green-500;
+      }
+      &.minimize {
+        @apply bg-yellow-400;
+      }
+    }
+  }
+}
+
+.window-content {
+  @apply relative overflow-auto flex-1;
+}
+
+.window-navigator-icon {
+  min-height: 33px;
+  @apply px-3 h-min rounded-full;
+
+  img {
+    @apply rounded-full w-4 h-4;
+  }
+}

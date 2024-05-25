@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@styles/app.scss';
+import '@styles/app.css';
 import store, { useAppDispatch } from '@renderer/contexts/store';
 import { load as loadTheme } from '@renderer/contexts/themeSlice';
 import { load as loadSetting } from '@renderer/contexts/settingSlice';

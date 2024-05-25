@@ -16,7 +16,6 @@ import classNames from 'classnames';
 import WindowControls from './WindowControls';
 import navigator from '@main/window/navigatorContextApi';
 import { WindowContext } from './WindowFrame';
-import '@renderer/styles/navigator.scss';
 
 type Props = {
   title: string;
@@ -53,7 +52,7 @@ const Navigator: React.FC<Props> = props => {
     function handleClickOutside(event: MouseEvent) {
       if (activeMenuIndex.current != null) {
         if (menusRef[activeMenuIndex.current].current && !menusRef[activeMenuIndex.current].current?.contains(event.target as Node)) {
-          // console.log('You clicked outside of me!');
+          // console.log( 'You clicked outside of me!' );
           closeActiveMenu();
         }
       }

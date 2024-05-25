@@ -97,7 +97,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
 
   const InputFields = (field: 'article' | 'title' | 'link' | 'date', fields: ('selector' | 'property' | 'regex')[]) => (
     <div key={field}>
-      <label className='block text-sm font-medium text-gray-700'>{`${field.charAt(0).toUpperCase() + field.slice(1)} Selector`}</label>
+      <label className='block text-sm font-medium'>{`${field.charAt(0).toUpperCase() + field.slice(1)} Selector`}</label>
       <div className='flex space-x-2 mb-4'>
         {fields.map(subfield => (
           <input
@@ -105,7 +105,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
             placeholder={subfield.charAt(0).toUpperCase() + subfield.slice(1)}
             value={selectors[field][subfield as 'selector' | 'property' | 'regex']}
             onChange={e => handleInputChange(field, subfield as 'selector' | 'property' | 'regex', e.target.value)}
-            className='flex-1 p-1 border border-gray-300 rounded text-sm'
+            className='flex-1 p-1 border rounded text-sm'
           />
         ))}
       </div>
@@ -114,28 +114,28 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
 
   return (
     <AppModal title={'Site'} closeModal={closeModal} apply={apply}>
-      <label htmlFor='title' className='block text-sm font-medium text-gray-700 flex-1 truncate' title={data.name}>
+      <label htmlFor='title' className='block text-sm font-medium flex-1 truncate' title={data.name}>
         Title
       </label>
-      <div className='mt-1 mb-4 p-1 border border-gray-300 rounded text-sm flex items-center'>
+      <div className='mt-1 mb-4 p-1 border rounded text-sm flex items-center'>
         {data.favicon && <img src={data.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
         <span className='truncate' title={data.name}>
           {data.name}
         </span>
       </div>
-      <label htmlFor='url' className='block text-sm font-medium text-gray-700 flex-1 truncate' title={data.url}>
+      <label htmlFor='url' className='block text-sm font-medium flex-1 truncate' title={data.url}>
         URL
       </label>
-      <div className='mt-1 mb-4 p-1 border border-gray-300 rounded text-sm flex items-center'>
+      <div className='mt-1 mb-4 p-1 border rounded text-sm flex items-center'>
         <span className='truncate' title={data.url}>
           {data.url}
         </span>
       </div>
-      <label htmlFor='html' className='block text-sm font-medium text-gray-700'>
+      <label htmlFor='html' className='block text-sm font-medium'>
         HTML Content
       </label>
       <textarea
-        className='mt-1 mb-4 text-xs block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+        className='mt-1 mb-4 text-xs block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
         rows={10}
         readOnly
         value={data.html}
@@ -148,7 +148,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
         {InputFields('date', ['selector', 'property', 'regex'])}
       </div>
       <div className='text-center'>
-        <button disabled={loading} onClick={fetchPreview} className='text-sm w-full py-1 bg-gray-500 text-white rounded hover:bg-gray-600'>
+        <button disabled={loading} onClick={fetchPreview} className='w-full button icon'>
           {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faEye} />}
         </button>
       </div>
@@ -157,12 +157,12 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
           <a
             key={index}
             onClick={() => navigator.open_url(item.url.startsWith('http') ? item.url : new URL(item.url, data.url).href)}
-            className='flex items-center mb-2 p-2 border border-gray-200 rounded shadow-sm'
+            className='flex items-center mb-2 p-2 border rounded shadow-sm app-bgcolor'
             rel='noreferrer'>
             {item.site.favicon && <img src={item.site.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
             <div className='flex flex-col flex-1'>
               <span className='text-sm font-medium'>{item.title}</span>
-              <span className='text-xs text-gray-500'>{moment(item.createdAt).isValid() ? moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss') : moment().format('YYYY-MM-DD HH:mm:ss')}</span>
+              <span className='text-xs opacity-50'>{moment(item.createdAt).isValid() ? moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss') : moment().format('YYYY-MM-DD HH:mm:ss')}</span>
             </div>
           </a>
         ))}

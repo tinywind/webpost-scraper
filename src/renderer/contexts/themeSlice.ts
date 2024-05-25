@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import util from '@main/window/utilContextApi';
 
 const KEY = 'dark-mode';
 
@@ -17,22 +18,26 @@ const themeSlice = createSlice({
       if (usingDarkTheme !== 'true') {
         state.theme = 'light';
         localStorage.setItem(KEY, 'false');
-        document.body.classList.remove(KEY);
+        // document.body.classList.remove(KEY);
+        util.setLightMode();
       } else {
         state.theme = 'dark';
         localStorage.setItem(KEY, 'true');
-        document.body.classList.add(KEY);
+        // document.body.classList.add(KEY);
+        util.setDarkMode();
       }
     },
     setLight: state => {
       state.theme = 'light';
       localStorage.setItem(KEY, 'false');
-      document.body.classList.remove(KEY);
+      // document.body.classList.remove(KEY);
+      util.setLightMode();
     },
     setDark: state => {
       state.theme = 'dark';
       localStorage.setItem(KEY, 'true');
-      document.body.classList.add(KEY);
+      // document.body.classList.add(KEY);
+      util.setDarkMode();
     },
   },
 });

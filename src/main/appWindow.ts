@@ -15,8 +15,8 @@ let appWindow: BrowserWindow;
  */
 export function createAppWindow(): BrowserWindow {
   appWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     backgroundColor: '#202020',
     show: false,
     autoHideMenuBar: true,
@@ -35,9 +35,13 @@ export function createAppWindow(): BrowserWindow {
 
   appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
-  appWindow.on('ready-to-show', () => appWindow.show());
+  appWindow.on('ready-to-show', () => {
+    appWindow.show();
+    if (process.env.NODE_ENV === 'development') appWindow.webContents.toggleDevTools();
+  });
 
-  registerMainIPC();
+  registerNavigatorIpc(appWindow);
+  registerUtilIpc();
 
   appWindow.on('close', () => {
     appWindow = null;
@@ -45,9 +49,4 @@ export function createAppWindow(): BrowserWindow {
   });
 
   return appWindow;
-}
-
-function registerMainIPC() {
-  registerNavigatorIpc(appWindow);
-  registerUtilIpc();
 }

@@ -1,0 +1,40 @@
+@layer components {
+  @media (prefers-color-scheme: light) {
+    :root {
+      --app-accent-color: theme('colors.green.600');
+      --app-bgcolor: theme('colors.zinc.50');
+      --app-border-color: theme('colors.zinc.300');
+      --app-color: theme('colors.zinc.800');
+      --input-color: theme('colors.zinc.700');
+      --button-active-bgcolor: theme('colors.zinc.300');
+      --button-active-color: theme('colors.zinc.800');
+      --button-border: 1px solid theme('colors.zinc.300');
+      --button-bgcolor: theme('colors.white');
+      --button-color: theme('colors.zinc.800');
+      --button-hover-bgcolor: theme('colors.zinc.200');
+      --button-shadow-color: theme('colors.white');
+      --scroll-thumb-bgcolor: rgb(59 59 59 / 30%);
+      --scroll-thumb-hover-bgcolor: var(--app-accent-color);
+      --scroll-track-bgcolor: theme('colors.zinc.700');
+      --selection-bgcolor: var(--app-accent-color);
+      --selection-color: theme('colors.white');
+      --navigator-bgcolor: theme('colors.white');
+      --navigator-color: theme('colors.zinc.400');
+      --navigator-title-color: theme('colors.zinc.100');
+      --navigator-menu-title-hover-bgcolor: theme('colors.zinc.200');
+      --navigator-menu-title-shadow-color: rgba(255, 255, 255, 0.8);
+      --navigator-menu-title-active-bgcolor: theme('colors.white');
+      --navigator-menu-title-active-border-color: theme('colors.zinc.400');
+      --navigator-menu-separator-bgcolor: theme('colors.zinc.400');
+      --navigator-popup-bgcolor: theme('colors.white');
+      --navigator-popup-border: theme('colors.zinc.200');
+      --navigator-popup-shadow: theme('boxShadow.DEFAULT');
+      --navigator-popup-item-name-color: theme('colors.zinc.900');
+      --navigator-popup-item-name-shadow-color: rgba(255, 255, 255, 0.8);
+      --navigator-popup-item-hover-color: theme('colors.black');
+      --navigator-popup-item-hover-shortcut-color: var(--app-accent-color);
+      --navigator-popup-item-hover-bgcolor: theme('colors.zinc.300');
+      --navigator-popup-item-shortcut-color: theme('colors.zinc.400');
+    }
+  }
+}
