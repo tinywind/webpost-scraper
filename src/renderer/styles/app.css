@@ -1,6 +1,7 @@
 @import './dark.css';
 @import './light.css';
 @import './navigator.css';
+@import './primereact.css';
 
 @tailwind base;
 @tailwind components;
@@ -11,6 +12,134 @@
   --app-font-family: theme('fontFamily.sans');
   --scroll-width: 10px;
 }
+
+.main-teaser {
+  @apply text-gray-800;
+
+  &:after {
+    @apply shadow-transparent;
+  }
+}
+
+.versions .item {
+  @apply bg-white bg-opacity-50 text-gray-600 shadow-custom;
+
+  & > span {
+    @apply text-gray-400;
+  }
+}
+
+::selection {
+  background: var(--selection-bgcolor);
+  color: var(--selection-color);
+}
+
+::-webkit-scrollbar {
+  width: var(--scroll-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scroll-track-bgcolor);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb-bgcolor);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover-bgcolor);
+}
+
+html,
+body,
+#app {
+  @apply h-full;
+}
+
+body {
+  @apply m-0;
+  font-size: var(--app-font-size);
+  font-family: var(--app-font-family), serif;
+  color: var(--app-color);
+  background: var(--app-bgcolor);
+  line-height: 1.5;
+}
+
+body {
+  background-size: 32px 32px;
+  background-image: linear-gradient(to right, #7070700d 1px, transparent 1px), linear-gradient(to bottom, #7070700d 1px, transparent 1px);
+}
+
+input,
+textarea {
+  color: var(--input-color);
+  background-color: var(--input-bgcolor);
+  border-color: var(--input-border-color);
+
+  &:disabled {
+    color: var(--input-disabled-color);
+  }
+}
+
+h1 {
+  @apply m-0;
+}
+
+a,
+button {
+  @apply cursor-pointer;
+}
+
+#app {
+  @apply flex flex-col box-border;
+  user-select: none;
+
+  &.has-border {
+    border: var(--app-border-color);
+  }
+}
+
+.rotate {
+  animation: rotate 4.5s linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.button {
+  @apply px-2 py-1 rounded text-sm;
+  background-color: var(--button-bgcolor);
+  color: var(--button-color);
+  border: var(--button-border);
+  box-shadow: 0 1px 2px var(--button-shadow-color);
+  &:hover {
+    background-color: var(--button-hover-bgcolor);
+  }
+  &:active {
+    background-color: var(--button-active-bgcolor);
+    color: var(--button-active-color);
+    @apply shadow-inner font-bold;
+  }
+  &.active {
+    background-color: var(--button-hover-bgcolor);
+    color: var(--button-active-color);
+    @apply shadow-inner font-bold;
+  }
+  &.icon-only {
+    &:not(:hover) {
+      background-color: transparent;
+      border-color: transparent;
+    }
+  }
+}
+
+.modal {
+  background-color: var(--app-bgcolor);
+}
+
 
 .app-accent-color {
   color: var(--app-accent-color);
@@ -26,6 +155,15 @@
 }
 .input-color {
   color: var(--input-color);
+}
+.input-disabled-color {
+  color: var(--input-disabled-color);
+}
+.input-bgcolor {
+  background-color: var(--input-bgcolor);
+}
+.input-border-color {
+  border-color: var(--input-border-color);
 }
 .button-active-bgcolor {
   background-color: var(--button-active-bgcolor);
@@ -113,125 +251,4 @@
 }
 .navigator-popup-item-shortcut-color {
   color: var(--navigator-popup-item-shortcut-color);
-}
-
-.main-teaser {
-  @apply text-gray-800;
-
-  &:after {
-    @apply shadow-transparent;
-  }
-}
-
-.versions .item {
-  @apply bg-white bg-opacity-50 text-gray-600 shadow-custom;
-
-  & > span {
-    @apply text-gray-400;
-  }
-}
-
-::selection {
-  background: var(--selection-bgcolor);
-  color: var(--selection-color);
-}
-
-::-webkit-scrollbar {
-  width: var(--scroll-width);
-}
-
-::-webkit-scrollbar-track {
-  background: var(--scroll-track-bgcolor);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb-bgcolor);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover-bgcolor);
-}
-
-html,
-body,
-#app {
-  @apply h-full;
-}
-
-body {
-  @apply m-0;
-  font-size: var(--app-font-size);
-  font-family: var(--app-font-family), serif;
-  color: var(--app-color);
-  background: var(--app-bgcolor);
-  line-height: 1.5;
-}
-
-body {
-  background-size: 32px 32px;
-  background-image: linear-gradient(to right, #7070700d 1px, transparent 1px), linear-gradient(to bottom, #7070700d 1px, transparent 1px);
-}
-
-input,
-textarea {
-  color: var(--input-color);
-}
-
-h1 {
-  @apply m-0;
-}
-
-a,
-button {
-  @apply cursor-pointer;
-}
-
-#app {
-  @apply flex flex-col box-border;
-  user-select: none;
-
-  &.has-border {
-    border: var(--app-border-color);
-  }
-}
-
-.rotate {
-  animation: rotate 4.5s linear infinite;
-}
-
-@keyframes rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.button {
-  @apply px-2 py-1 rounded text-sm;
-  background-color: var(--button-bgcolor);
-  color: var(--button-color);
-  border: var(--button-border);
-  box-shadow: 0 1px 2px var(--button-shadow-color);
-  &:hover {
-    background-color: var(--button-hover-bgcolor);
-  }
-  &:active {
-    background-color: var(--button-active-bgcolor);
-    color: var(--button-active-color);
-    @apply shadow-inner font-bold;
-  }
-  &.active {
-    background-color: var(--button-hover-bgcolor);
-    color: var(--button-active-color);
-    @apply shadow-inner font-bold;
-  }
-  &.icon-only {
-    &:not(:hover) {
-      background-color: transparent;
-      border-color: transparent;
-    }
-  }
-}
-
-.modal {
-  background-color: var(--app-bgcolor);
 }

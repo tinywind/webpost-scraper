@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Post, Selector, Site } from '@src/types';
+import React, { useState } from 'react';
+import { Post as PostType, Selector, Site } from '@src/types';
 import { load } from 'cheerio';
 import util from '@main/window/utilContextApi';
-import moment from 'moment';
 import AppModal from '@components/AppModal';
-import navigator from '@main/window/navigatorContextApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import BeatLoader from 'react-spinners/BeatLoader';
+import Post from '@components/Post';
 
 export type Data = Site & { html?: string };
 const DEFAULT_PROPERTY = 'textContent';
@@ -24,7 +23,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
     link: { selector: data.urlSelector?.selector || '', property: data.urlSelector?.property || '', regex: data.urlSelector?.regex || '' },
     date: { selector: data.createdAtSelector?.selector || '', property: data.createdAtSelector?.property || '', regex: data.createdAtSelector?.regex || '' },
   });
-  const [previewData, setPreviewData] = useState<Array<Post>>([]);
+  const [previewData, setPreviewData] = useState<Array<PostType>>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchPreview = async () => {
@@ -128,17 +127,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
       </div>
       <div className='mt-4'>
         {previewData.map((item, index) => (
-          <a
-            key={index}
-            onClick={() => navigator.open_url(item.url.startsWith('http') ? item.url : new URL(item.url, data.url).href)}
-            className='flex items-center mb-2 p-2 border rounded shadow-sm app-bgcolor'
-            rel='noreferrer'>
-            {item.site.favicon && <img src={item.site.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
-            <div className='flex flex-col flex-1'>
-              <span className='text-sm font-medium'>{item.title}</span>
-              <span className='text-xs opacity-50'>{moment(item.createdAt).isValid() ? moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss') : moment().format('YYYY-MM-DD HH:mm:ss')}</span>
-            </div>
-          </a>
+          <Post key={index} post={item} />
         ))}
       </div>
     </AppModal>

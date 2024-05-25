@@ -87,6 +87,8 @@
     "electron-squirrel-startup": "1.0.1",
     "moment": "^2.30.1",
     "nedb": "^1.8.0",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.6.6",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-modal": "^3.16.1",

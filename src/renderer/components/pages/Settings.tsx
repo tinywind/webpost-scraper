@@ -5,12 +5,13 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';
 import { load } from 'cheerio';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload, faSearch, faTrashCan, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faSearch, faTrashCan, faUpload, faList } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
 import { setPollingInterval, setRetention, save, addSite, deleteSite, updateSite } from '@renderer/contexts/settingSlice';
 import { error, success, warning } from '@renderer/utils/swals';
 import Loader from '@components/Loader';
+import router from '@renderer/router';
 
 export default function Settings() {
   const [url, setUrl] = useState('');
@@ -117,6 +118,9 @@ export default function Settings() {
               <label htmlFor='file-upload' className='button icon'>
                 <FontAwesomeIcon icon={faUpload} />
               </label>
+              <button onClick={() => router.navigate('/list')} className='ml-4 button icon'>
+                <FontAwesomeIcon icon={faList} />
+              </button>
             </div>
           </div>
           <div className='border-t border-gray-300 mt-4 mb-4 pt-4'>
@@ -156,7 +160,7 @@ export default function Settings() {
           </div>
 
           <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
-            <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border border-gray-300 rounded text-sm' />
+            <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border rounded text-sm' />
             <button disabled={loading} onClick={() => loadSiteData(url)} className='button'>
               {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
             </button>

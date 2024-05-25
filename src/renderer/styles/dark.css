@@ -6,6 +6,9 @@
       --app-border-color: theme('colors.zinc.700');
       --app-color: theme('colors.zinc.300');
       --input-color: theme('colors.zinc.700');
+      --input-disabled-color: theme('colors.zinc.400');
+      --input-bgcolor: theme('colors.zinc.400');
+      --input-border-color: theme('colors.zinc.200');
       --button-active-bgcolor: theme('colors.zinc.800');
       --button-active-color: theme('colors.zinc.800');
       --button-border: 1px solid theme('colors.zinc.800');
