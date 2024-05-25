@@ -12,7 +12,7 @@
 
 import classNames from 'classnames';
 import React from 'react';
-import navigator from '@main/window/navigatorContext';
+import navigator from '@main/window/navigatorContextApi';
 
 import ControlButton from './ControlButton';
 

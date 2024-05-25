@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Post, Selector, Site } from '@renderer/types';
 import { load } from 'cheerio';
-import util from '@main/window/utilContext';
+import util from '@main/window/utilContextApi';
 import moment from 'moment';
 import AppModal from '@components/AppModal';
-import navigator from '@main/window/navigatorContext';
+import navigator from '@main/window/navigatorContextApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import BeatLoader from 'react-spinners/BeatLoader';

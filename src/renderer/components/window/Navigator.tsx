@@ -14,7 +14,7 @@ import React, { createRef, useContext, useEffect, useRef, useState } from 'react
 import navigatorMenus from '@renderer/navigatorMenus';
 import classNames from 'classnames';
 import WindowControls from './WindowControls';
-import navigator from '@main/window/navigatorContext';
+import navigator from '@main/window/navigatorContextApi';
 import { WindowContext } from './WindowFrame';
 
 type Props = {
