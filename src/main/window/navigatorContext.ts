@@ -9,5 +9,6 @@ const navigatorContext = {
   open_url: (url: string) => ipcRenderer.invoke('open-url', url),
 };
 
+export type NavigatorContextApi = typeof navigatorContext;
+
 export default navigatorContext;
-export const navigator: typeof navigatorContext = (window as any).electron_window?.navigator;

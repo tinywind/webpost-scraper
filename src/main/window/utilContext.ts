@@ -10,5 +10,6 @@ const utilContext = {
   useSystemMode: () => ipcRenderer.invoke('dark-mode:system'),
 };
 
+export type UtilContextApi = typeof utilContext;
+
 export default utilContext;
-export const util: typeof utilContext = (window as any).electron_utils;
