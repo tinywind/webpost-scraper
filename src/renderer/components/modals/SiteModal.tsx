@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Post, Selector, Site } from '@renderer/types';
+import { Post, Selector, Site } from '@src/types';
 import { load } from 'cheerio';
 import util from '@main/window/utilContextApi';
 import moment from 'moment';

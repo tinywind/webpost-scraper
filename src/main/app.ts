@@ -1,5 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import { createAppWindow } from './appWindow';
+import { Setting } from '@src/types';
+
+export const setting: Setting = { pollingInterval: 5, retention: 3, sites: [] };
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {

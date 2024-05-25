@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Site } from '@renderer/types';
+import { Site } from '@src/types';
 import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';
@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch, faTrashCan, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
-import { setPollingInterval, setRetention, resetSites, addSite, deleteSite } from '@renderer/contexts/settingSlice';
+import { setPollingInterval, setRetention, save, addSite, deleteSite } from '@renderer/contexts/settingSlice';
 import { error, success, warning } from '@renderer/utils/swals';
 
 const cloneSite = (site: Site) => ({
@@ -96,10 +96,7 @@ export default function Settings() {
           setPollingIntervalState(setting.pollingInterval);
           setRetentionState(setting.retention);
           setSites(setting.sites);
-          dispatch(setPollingInterval({ pollingInterval: setting.pollingInterval }));
-          dispatch(setRetention({ retention: setting.retention }));
-          dispatch(resetSites({ sites: setting.sites }));
-
+          dispatch(save({ setting }));
           success('Settings imported');
         }
       };
