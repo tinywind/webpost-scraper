@@ -1,6 +1,6 @@
 import router from '@renderer/router';
 import store from '@renderer/contexts/store';
-import { setDark, setLight } from '@renderer/contexts/themeSlice';
+import { setDark, setLight, useSystemMode } from '@renderer/contexts/themeSlice';
 
 export type MenuItem = {
   name: string;
@@ -20,8 +20,6 @@ const navigatorMenus: Menu[] = [
     name: 'View',
     items: [
       { name: 'List', action: () => router.navigate('/'), shortcut: 'Ctrl+1' },
-      { name: '__' },
-      { name: '__' },
       { name: 'Settings', action: () => router.navigate('/settings'), shortcut: 'Ctrl+2' },
     ],
   },
@@ -30,6 +28,8 @@ const navigatorMenus: Menu[] = [
     items: [
       { name: 'Light', action: () => store.dispatch(setLight()) },
       { name: 'Dark', action: () => store.dispatch(setDark()) },
+      { name: '__' },
+      { name: 'System', action: () => store.dispatch(useSystemMode()) },
     ],
   },
   {

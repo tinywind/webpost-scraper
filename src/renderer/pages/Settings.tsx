@@ -11,6 +11,29 @@ import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
 import { set } from '@renderer/contexts/settingSlice';
 import { error, success, warning } from '@renderer/swals';
 
+const cloneSite = (site: Site) => ({
+  id: site.id,
+  name: site.name,
+  url: site.url,
+  favicon: site.favicon,
+  articleSelector: site.articleSelector,
+  titleSelector: {
+    selector: site.titleSelector.selector,
+    property: site.titleSelector.property,
+    regex: site.titleSelector.regex,
+  },
+  urlSelector: {
+    selector: site.urlSelector.selector,
+    property: site.urlSelector.property,
+    regex: site.urlSelector.regex,
+  },
+  createdAtSelector: {
+    selector: site.createdAtSelector.selector,
+    property: site.createdAtSelector.property,
+    regex: site.createdAtSelector.regex,
+  },
+});
+
 export default function Settings() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,60 +47,11 @@ export default function Settings() {
   useEffect(() => {
     settingState.setting.pollingInterval && setPollingInterval(settingState.setting.pollingInterval);
     settingState.setting.retention && setRetention(settingState.setting.retention);
-    settingState.setting.sites && setSites(settingState.setting.sites);
+    settingState.setting.sites && setSites(settingState.setting.sites.map(site => cloneSite(site)));
 
     if (process.env.NODE_ENV !== 'development') return;
     setUrl('https://1bang.kr/ticket-deal');
-    if (!settingState.setting.sites || !settingState.setting.sites.length)
-      setSites([
-        {
-          id: uuid(),
-          name: 'Google',
-          url: 'https://google.com',
-          favicon: 'https://www.google.com/favicon.ico',
-          titleSelector: {
-            selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
-            property: 'innerText',
-          },
-          urlSelector: {
-            selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
-            property: 'href',
-          },
-        },
-        {
-          id: uuid(),
-          name: 'Yahoo',
-          url: 'https://yahoo.com',
-          favicon: 'https://www.yahoo.com/favicon.ico',
-          titleSelector: {
-            selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
-            property: 'innerText',
-          },
-          urlSelector: {
-            selector: 'body > main > article > div > section:nth-of-type(2) > div > a',
-            property: 'href',
-          },
-        },
-      ]);
   }, []);
-
-  const save = (pollingInterval: number, retention: number, sites: Site[]) =>
-    dispatch(
-      set({
-        pollingInterval,
-        retention,
-        sites: sites.map(site => ({
-          id: site.id,
-          name: site.name,
-          url: site.url,
-          favicon: site.favicon,
-          articleSelector: site.articleSelector,
-          titleSelector: site.titleSelector,
-          urlSelector: site.urlSelector,
-          createdAtSelector: site.createdAtSelector,
-        })),
-      }),
-    );
 
   const fetchSiteData = async () => {
     if (!url) {
@@ -107,22 +81,8 @@ export default function Settings() {
     }
   };
 
-  const exportSettings = () =>
-    util.exportSettings({
-      pollingInterval,
-      retention,
-      sites: sites.map(site => ({
-        id: site.id,
-        name: site.name,
-        url: site.url,
-        favicon: site.favicon,
-        articleSelector: site.articleSelector,
-        titleSelector: site.titleSelector,
-        urlSelector: site.urlSelector,
-        createdAtSelector: site.createdAtSelector,
-      })),
-    });
-
+  const save = (pollingInterval: number, retention: number, sites: Site[]) => dispatch(set({ pollingInterval, retention, sites: sites.map(site => cloneSite(site)) }));
+  const exportSettings = () => util.exportSettings({ pollingInterval, retention, sites: sites.map(site => cloneSite(site)) });
   const importSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {

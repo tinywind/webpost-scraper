@@ -47,26 +47,8 @@ export const registerUtilIpc = () => {
       });
   });
 
-  ipcMain.handle('dark-mode:dark', () => {
-    nativeTheme.themeSource = 'dark';
-    return nativeTheme.shouldUseDarkColors;
-  });
-
-  ipcMain.handle('dark-mode:light', () => {
-    nativeTheme.themeSource = 'light';
-    return nativeTheme.shouldUseDarkColors;
-  });
-
-  ipcMain.handle('dark-mode:toggle', () => {
-    if (nativeTheme.shouldUseDarkColors) {
-      nativeTheme.themeSource = 'light';
-    } else {
-      nativeTheme.themeSource = 'dark';
-    }
-    return nativeTheme.shouldUseDarkColors;
-  });
-
-  ipcMain.handle('dark-mode:system', () => {
-    nativeTheme.themeSource = 'system';
-  });
+  ipcMain.handle('dark-mode:toggle', () => (nativeTheme.themeSource = nativeTheme.shouldUseDarkColors ? 'light' : 'dark'));
+  ipcMain.handle('dark-mode:dark', () => (nativeTheme.themeSource = 'dark'));
+  ipcMain.handle('dark-mode:light', () => (nativeTheme.themeSource = 'light'));
+  ipcMain.handle('dark-mode:system', () => (nativeTheme.themeSource = 'system'));
 };

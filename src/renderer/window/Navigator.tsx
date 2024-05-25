@@ -11,7 +11,7 @@
  */
 
 import React, { createRef, useContext, useEffect, useRef, useState } from 'react';
-import navigatorMenus from '@main/window/navigatorMenus';
+import navigatorMenus from '@renderer/navigatorMenus';
 import classNames from 'classnames';
 import WindowControls from './WindowControls';
 import navigator from '@main/window/navigatorContextApi';

@@ -13,6 +13,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'electron-react-typescript-webpack-2022',
+        quiet: false,
       },
     },
     {

@@ -2,46 +2,51 @@ import { createSlice } from '@reduxjs/toolkit';
 import util from '@main/window/utilContextApi';
 
 const KEY = 'dark-mode';
+const THEME_DARK = 'dark';
+const THEME_LIGHT = 'light';
+const THEME_SYSTEM = 'system';
 
 export interface ThemeState {
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' | 'system';
 }
 
-export const initialState: ThemeState = { theme: 'dark' };
+export const initialState: ThemeState = { theme: 'system' };
 
 const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
     load: state => {
-      const usingDarkTheme = localStorage.getItem(KEY);
-      if (usingDarkTheme !== 'true') {
-        state.theme = 'light';
-        localStorage.setItem(KEY, 'false');
-        // document.body.classList.remove(KEY);
+      const theme = localStorage.getItem(KEY);
+      if (theme === THEME_DARK) {
+        state.theme = THEME_DARK;
+        util.setDarkMode();
+      } else if (theme === THEME_LIGHT) {
+        state.theme = THEME_LIGHT;
         util.setLightMode();
       } else {
-        state.theme = 'dark';
-        localStorage.setItem(KEY, 'true');
-        // document.body.classList.add(KEY);
-        util.setDarkMode();
+        state.theme = THEME_SYSTEM;
+        util.useSystemMode();
       }
     },
+    useSystemMode: state => {
+      state.theme = THEME_SYSTEM;
+      util.useSystemMode();
+      localStorage.setItem(KEY, THEME_SYSTEM);
+    },
     setLight: state => {
-      state.theme = 'light';
-      localStorage.setItem(KEY, 'false');
-      // document.body.classList.remove(KEY);
+      state.theme = THEME_LIGHT;
       util.setLightMode();
+      localStorage.setItem(KEY, THEME_LIGHT);
     },
     setDark: state => {
-      state.theme = 'dark';
-      localStorage.setItem(KEY, 'true');
-      // document.body.classList.add(KEY);
+      state.theme = THEME_DARK;
       util.setDarkMode();
+      localStorage.setItem(KEY, THEME_DARK);
     },
   },
 });
 
-export const { load, setLight, setDark } = themeSlice.actions;
+export const { load, setLight, setDark, useSystemMode } = themeSlice.actions;
 
 export default themeSlice.reducer;
