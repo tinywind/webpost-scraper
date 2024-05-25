@@ -59,7 +59,6 @@
     "eslint-import-resolver-alias": "1.1.2",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-react": "7.34.1",
-    "file-loader": "6.2.0",
     "fork-ts-checker-webpack-plugin": "9.0.2",
     "node-loader": "2.0.0",
     "postcss": "^8.4.38",
@@ -83,9 +82,11 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@reduxjs/toolkit": "^2.2.5",
     "@types/uuid": "^9.0.8",
+    "add": "^2.0.6",
     "cheerio": "1.0.0-rc.12",
+    "dexie": "^4.0.5",
+    "dexie-react-hooks": "^1.1.7",
     "electron-squirrel-startup": "1.0.1",
-    "jsstore": "^4.7.4",
     "moment": "^2.30.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -96,6 +97,7 @@
     "react-sweetalert2": "^0.6.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
+    "redux-thunk": "^3.1.0",
     "sweetalert2": "^11.11.0",
     "sweetalert2-react-content": "^5.0.7"
   }

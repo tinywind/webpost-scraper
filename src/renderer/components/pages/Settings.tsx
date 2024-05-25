@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch, faTrashCan, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
-import { set } from '@renderer/contexts/settingSlice';
-import { error, success, warning } from '@renderer/swals';
+import { setPollingInterval, setRetention, resetSites, addSite, deleteSite } from '@renderer/contexts/settingSlice';
+import { error, success, warning } from '@renderer/utils/swals';
 
 const cloneSite = (site: Site) => ({
   id: site.id,
@@ -39,14 +39,14 @@ export default function Settings() {
   const [loading, setLoading] = useState(false);
   const [sites, setSites] = useState<Site[]>([]);
   const [siteData, setSiteData] = useState<Data | null>(null);
-  const [pollingInterval, setPollingInterval] = useState(5);
-  const [retention, setRetention] = useState(3);
+  const [pollingIntervalState, setPollingIntervalState] = useState(5);
+  const [retentionState, setRetentionState] = useState(3);
   const dispatch = useAppDispatch();
   const settingState = useAppSelector(state => state.setting);
 
   useEffect(() => {
-    settingState.setting.pollingInterval && setPollingInterval(settingState.setting.pollingInterval);
-    settingState.setting.retention && setRetention(settingState.setting.retention);
+    settingState.setting.pollingInterval && setPollingIntervalState(settingState.setting.pollingInterval);
+    settingState.setting.retention && setRetentionState(settingState.setting.retention);
     settingState.setting.sites && setSites(settingState.setting.sites.map(site => cloneSite(site)));
 
     if (process.env.NODE_ENV !== 'development') return;
@@ -81,8 +81,7 @@ export default function Settings() {
     }
   };
 
-  const save = (pollingInterval: number, retention: number, sites: Site[]) => dispatch(set({ pollingInterval, retention, sites: sites.map(site => cloneSite(site)) }));
-  const exportSettings = () => util.exportSettings({ pollingInterval, retention, sites: sites.map(site => cloneSite(site)) });
+  const exportSettings = () => util.exportSettings({ pollingInterval: pollingIntervalState, retention: retentionState, sites: sites.map(site => cloneSite(site)) });
   const importSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -94,10 +93,13 @@ export default function Settings() {
           sites: Site[];
         };
         if (setting.pollingInterval && setting.retention && setting.sites) {
-          setPollingInterval(setting.pollingInterval);
-          setRetention(setting.retention);
+          setPollingIntervalState(setting.pollingInterval);
+          setRetentionState(setting.retention);
           setSites(setting.sites);
-          save(setting.pollingInterval, setting.retention, setting.sites);
+          dispatch(setPollingInterval({ pollingInterval: setting.pollingInterval }));
+          dispatch(setRetention({ retention: setting.retention }));
+          dispatch(resetSites({ sites: setting.sites }));
+
           success('Settings imported');
         }
       };
@@ -115,16 +117,7 @@ export default function Settings() {
             <span className='truncate'>{site.url}</span>
           </div>
         </div>
-        <button
-          onClick={() => (
-            setSites(sites.filter(s => s.id !== site.id)),
-            save(
-              pollingInterval,
-              retention,
-              sites.filter(s => s.id !== site.id),
-            )
-          )}
-          className='button icon'>
+        <button onClick={() => (setSites(sites.filter(s => s.id !== site.id)), dispatch(deleteSite({ id: site.id })))} className='button icon'>
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
@@ -160,7 +153,10 @@ export default function Settings() {
                 { value: 720, label: '12 hours' },
                 { value: 1440, label: '1 day' },
               ].map((e, index) => (
-                <button key={index} onClick={() => (setPollingInterval(e.value), save(e.value, retention, sites))} className={`button ${pollingInterval === e.value ? 'active' : ''}`}>
+                <button
+                  key={index}
+                  onClick={() => (setPollingIntervalState(e.value), dispatch(setPollingInterval({ pollingInterval: e.value })))}
+                  className={`button ${pollingIntervalState === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
@@ -173,7 +169,7 @@ export default function Settings() {
                 { value: 7, label: '7 days' },
                 { value: 14, label: '14 days' },
               ].map((e, index) => (
-                <button key={index} onClick={() => (setRetention(e.value), save(pollingInterval, e.value, sites))} className={`button ${retention === e.value ? 'active' : ''}`}>
+                <button key={index} onClick={() => (setRetentionState(e.value), dispatch(setRetention({ retention: e.value })))} className={`button ${retentionState === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
@@ -191,7 +187,7 @@ export default function Settings() {
           ))}
         </div>
       </div>
-      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} addSite={(site: Site) => (setSites([...sites, site]), save(pollingInterval, retention, [...sites, site]))} />}
+      {siteData && <SiteModal closeModal={() => setSiteData(null)} data={siteData} addSite={(site: Site) => (setSites([...sites, site]), dispatch(addSite({ site })))} />}
     </>
   );
 }

@@ -13,7 +13,7 @@ let appWindow: BrowserWindow;
  * Create Application Window
  * @returns {BrowserWindow} Application Window Instance
  */
-export function createAppWindow(): BrowserWindow {
+export async function createAppWindow(): Promise<BrowserWindow> {
   appWindow = new BrowserWindow({
     width: 1920,
     height: 1080,

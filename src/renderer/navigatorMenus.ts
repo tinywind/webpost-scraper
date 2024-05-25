@@ -19,7 +19,7 @@ const navigatorMenus: Menu[] = [
   {
     name: 'View',
     items: [
-      { name: 'List', action: () => router.navigate('/'), shortcut: 'Ctrl+1' },
+      { name: 'List', action: () => router.navigate('/list'), shortcut: 'Ctrl+1' },
       { name: 'Settings', action: () => router.navigate('/settings'), shortcut: 'Ctrl+2' },
     ],
   },

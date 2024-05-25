@@ -23,15 +23,21 @@ importers:
       '@types/uuid':
         specifier: ^9.0.8
         version: 9.0.8
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
+      dexie:
+        specifier: ^4.0.5
+        version: 4.0.5
+      dexie-react-hooks:
+        specifier: ^1.1.7
+        version: 1.1.7(@types/react@18.3.2)(dexie@4.0.5)(react@18.3.1)
       electron-squirrel-startup:
         specifier: 1.0.1
         version: 1.0.1
-      jsstore:
-        specifier: ^4.7.4
-        version: 4.7.4
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -62,6 +68,9 @@ importers:
       redux-logger:
         specifier: ^3.0.6
         version: 3.0.6
+      redux-thunk:
+        specifier: ^3.1.0
+        version: 3.1.0(redux@5.0.1)
       sweetalert2:
         specifier: ^11.11.0
         version: 11.11.0
@@ -153,9 +162,6 @@ importers:
       eslint-plugin-react:
         specifier: 7.34.1
         version: 7.34.1(eslint@8.57.0)
-      file-loader:
-        specifier: 6.2.0
-        version: 6.2.0(webpack@5.91.0(webpack-cli@5.1.4(webpack-dev-server@4.15.2)(webpack@5.91.0)))
       fork-ts-checker-webpack-plugin:
         specifier: 9.0.2
         version: 9.0.2(typescript@5.4.5)(webpack@5.91.0(webpack-cli@5.1.4(webpack-dev-server@4.15.2)(webpack@5.91.0)))
@@ -825,6 +831,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  add@2.0.6:
+    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
+
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -1399,6 +1408,16 @@ packages:
   detect-node@2.1.0:
     resolution: {integrity: sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==}
 
+  dexie-react-hooks@1.1.7:
+    resolution: {integrity: sha512-Lwv5W0Hk+uOW3kGnsU9GZoR1er1B7WQ5DSdonoNG+focTNeJbHW6vi6nBoX534VKI3/uwHebYzSw1fwY6a7mTw==}
+    peerDependencies:
+      '@types/react': '>=16'
+      dexie: ^3.2 || ^4.0.1-alpha
+      react: '>=16'
+
+  dexie@4.0.5:
+    resolution: {integrity: sha512-ImqZ/Ems9UX5ynHZLDQ2uoyM3zYbrG3tzwz0nhNDXWbYjhITzCdQ8aeD2ICoRUA1ArLwsv9EJLRlJ9rbCmm+SQ==}
+
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
 
@@ -1755,12 +1774,6 @@ packages:
   file-entry-cache@6.0.1:
     resolution: {integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==}
     engines: {node: ^10.12.0 || >=12.0.0}
-
-  file-loader@6.2.0:
-    resolution: {integrity: sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      webpack: ^4.0.0 || ^5.0.0
 
   filename-reserved-regex@2.0.0:
     resolution: {integrity: sha512-lc1bnsSr4L4Bdif8Xb/qrtokGbq5zlsms/CYH8PP+WtCkGNF65DPiQY8vG3SakEdRn8Dlnm+gW/qWKKjS5sZzQ==}
@@ -2423,9 +2436,6 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-
-  jsstore@4.7.4:
-    resolution: {integrity: sha512-uS71ixKmBikkeTU6rYOtasWeatdrv6IczwyN+KszFuY43DDxyjVDIZ0prQ8M3a4ikfLsE5+kGJwmeGWBi2YMlg==}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -5057,6 +5067,8 @@ snapshots:
 
   acorn@8.11.3: {}
 
+  add@2.0.6: {}
+
   agent-base@6.0.2:
     dependencies:
       debug: 4.3.4
@@ -5687,6 +5699,14 @@ snapshots:
 
   detect-node@2.1.0: {}
 
+  dexie-react-hooks@1.1.7(@types/react@18.3.2)(dexie@4.0.5)(react@18.3.1):
+    dependencies:
+      '@types/react': 18.3.2
+      dexie: 4.0.5
+      react: 18.3.1
+
+  dexie@4.0.5: {}
+
   didyoumean@1.2.2: {}
 
   dir-compare@4.2.0:
@@ -6246,12 +6266,6 @@ snapshots:
   file-entry-cache@6.0.1:
     dependencies:
       flat-cache: 3.2.0
-
-  file-loader@6.2.0(webpack@5.91.0(webpack-cli@5.1.4(webpack-dev-server@4.15.2)(webpack@5.91.0))):
-    dependencies:
-      loader-utils: 2.0.4
-      schema-utils: 3.3.0
-      webpack: 5.91.0(webpack-cli@5.1.4(webpack-dev-server@4.15.2)(webpack@5.91.0))
 
   filename-reserved-regex@2.0.0: {}
 
@@ -6965,8 +6979,6 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
-
-  jsstore@4.7.4: {}
 
   jsx-ast-utils@3.3.5:
     dependencies:

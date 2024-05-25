@@ -43,7 +43,7 @@ module.exports = {
             {
               name: 'app_window',
               rhmr: 'react-hot-loader/patch',
-              html: path.join(rootDir, 'src/renderer/app.html'),
+              html: path.join(rootDir, 'assets/app.html'),
               js: path.join(rootDir, 'src/renderer/appRenderer.tsx'),
               preload: {
                 js: path.join(rootDir, 'src/renderer/appPreload.tsx'),
