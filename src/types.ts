@@ -64,10 +64,10 @@ export const extractPosts = (html: string, site: Site): Post[] => {
       const article$ = load($.html(article));
       const titleEl = article$(site.titleSelector.selector);
       const urlEl = article$(site.urlSelector.selector);
-      const dateEl = article$(site.createdAtSelector.selector);
+      const dateEl = site.createdAtSelector.selector ? article$(site.createdAtSelector.selector) : null;
       const titleProp = titleEl.prop(site.titleSelector.property || 'textContent') || '';
       const urlProp = urlEl.prop(site.urlSelector.property || 'href') || '';
-      const dateProp = dateEl.prop(site.createdAtSelector.property || 'textContent') || '';
+      const dateProp = dateEl ? dateEl.prop(site.createdAtSelector.property || 'textContent') || '' : '';
       let date = new Date();
       try {
         date = moment(dateProp?.match(new RegExp(site.createdAtSelector.regex))?.[0] || dateProp).toDate();

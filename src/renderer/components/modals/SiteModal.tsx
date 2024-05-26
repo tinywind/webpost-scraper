@@ -28,8 +28,6 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
     try {
       setLoading(true);
       const result = await util.fetchSiteData(data.url);
-      console.log(result);
-
       setPreviewData(
         extractPosts(result.html, {
           ...data,

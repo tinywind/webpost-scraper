@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, createContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Post as PostType } from '@src/types';
@@ -7,34 +7,72 @@ import router from '@renderer/router';
 import { ContextMenu } from 'primereact/contextmenu';
 import util from '@main/window/utilContextApi';
 
+export const HiddenContext = createContext<{ [key: string]: boolean }>({});
+
 export default function List() {
   const [activeTab, setActiveTab] = useState<'unread' | 'all' | 'marked'>('unread');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<PostType[]>([]);
+  const [hiddenState, setHiddenState] = useState<{ [key: string]: boolean }>({});
   const cm = useRef<ContextMenu>(null);
   const input = useRef<HTMLInputElement>(null);
 
+  const hidden = (post: PostType) => (activeTab === 'unread' && post.read) || (activeTab === 'marked' && !post.marked) || !post.title.includes(searchQuery);
+
   useEffect(() => {
-    const intervalId = setInterval(async () => setItems(await util.getPosts()), 10 * 1000);
+    console.log('[setHiddenState] activeTab changed');
+    setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
+  }, [activeTab]);
+
+  useEffect(() => {
+    console.log('[setHiddenState] searchQuery changed');
+    setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const newPosts = await util.getPosts();
+      const newPostsMap = new Map(newPosts.map(post => [post.url, post]));
+
+      setItems(prevItems => {
+        const prevUrls = new Set(prevItems.map(item => item.url));
+        const newItems = newPosts.filter(post => !prevUrls.has(post.url));
+        const updating = [...newItems, ...prevItems.filter(item => newPostsMap.has(item.url))];
+
+        console.log('[setHiddenState] updating items');
+        setHiddenState(prevItems => ({ ...prevItems, ...newItems.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}) }));
+
+        return updating;
+      });
+    }, 10 * 1000);
+
     return () => clearInterval(intervalId);
   }, []);
 
   const toggleMark = async (post: PostType) => {
     post.marked ? await util.unmarkPost(post.url) : await util.markPost(post.url);
     post.marked = !post.marked;
-    setItems([...items]);
+    setItems(prev => [...prev]);
+
+    console.log('[setHiddenState] toggleMark');
+    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
   };
 
   const setRead = async (post: PostType) => {
     await util.readPost(post.url);
     post.read = true;
-    setItems([...items]);
+    setItems(prev => [...prev]);
+
+    console.log('[setHiddenState] setRead');
+    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
   };
 
   const readAll = async () => {
     await util.readPost(items.map(item => item.url));
-    items.forEach(item => (item.read = true));
-    setItems([...items]);
+    setItems(prev => prev.map((e: PostType) => ({ ...e, read: true })));
+
+    console.log('[setHiddenState] readAll');
+    setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
   };
 
   return (
@@ -67,16 +105,11 @@ export default function List() {
             </div>
           </div>
           <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
-            {items
-              .filter(item => {
-                if (activeTab === 'unread') return !item.read;
-                if (activeTab === 'marked') return item.marked;
-                return true;
-              })
-              .filter(item => item.title.includes(searchQuery))
-              .map((item, index) => (
-                <Post key={index} post={item} index={index} onClick={setRead} toggleMark={toggleMark} />
+            <HiddenContext.Provider value={hiddenState}>
+              {items.map(item => (
+                <Post key={item.url} index={item.url} post={item} onClick={setRead} toggleMark={toggleMark} hiddenContext={HiddenContext} />
               ))}
+            </HiddenContext.Provider>
           </div>
         </div>
       </div>
