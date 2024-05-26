@@ -15,8 +15,8 @@ let appWindow: BrowserWindow;
  */
 export async function createAppWindow(): Promise<BrowserWindow> {
   appWindow = new BrowserWindow({
-    width: 1920,
-    height: 1080,
+    width: process.env.NODE_ENV === 'development' ? 1920 : 800,
+    height: process.env.NODE_ENV === 'development' ? 1080 : 600,
     backgroundColor: '#202020',
     show: false,
     autoHideMenuBar: true,
@@ -37,7 +37,6 @@ export async function createAppWindow(): Promise<BrowserWindow> {
 
   appWindow.on('ready-to-show', () => {
     appWindow.show();
-    if (process.env.NODE_ENV === 'development') appWindow.webContents.toggleDevTools();
   });
 
   registerNavigatorIpc(appWindow);
@@ -48,5 +47,11 @@ export async function createAppWindow(): Promise<BrowserWindow> {
     app.quit();
   });
 
+  if (process.env.NODE_ENV === 'development') appWindow.webContents.toggleDevTools();
+
+  return appWindow;
+}
+
+export function getAppWindow(): BrowserWindow {
   return appWindow;
 }

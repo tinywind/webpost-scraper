@@ -1,4 +1,5 @@
 import '@main/window/windowPreload';
+import router from '@renderer/router';
 
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');
