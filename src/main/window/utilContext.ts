@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import { FetchResult } from '@main/window/utilIpc';
-import { cloneSite, Setting, Site } from '@src/types';
+import { cloneSite, Setting, Site, Post } from '@src/types';
 
 const utilContext = {
   fetchSiteData: async (url: string): Promise<FetchResult> => await ipcRenderer.invoke('fetch-site-data', url),
@@ -15,6 +15,10 @@ const utilContext = {
   deleteSite: async (id: string) => ipcRenderer.invoke('repository:site:delete', id),
   setPollingInterval: async (pollingInterval: number) => ipcRenderer.invoke('repository:attribute:setPollingInterval', pollingInterval),
   setRetention: async (retention: number) => ipcRenderer.invoke('repository:attribute:setRetention', retention),
+  getPosts: async (): Promise<Array<Post>> => ipcRenderer.invoke('repository:post:findAll'),
+  readPost: async (url: string | string[]) => ipcRenderer.invoke('repository:post:read', url),
+  markPost: async (url: string) => ipcRenderer.invoke('repository:post:mark', url),
+  unmarkPost: async (url: string) => ipcRenderer.invoke('repository:post:unmark', url),
 };
 
 export type UtilContextApi = typeof utilContext;

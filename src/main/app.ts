@@ -1,6 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import { createAppWindow } from './appWindow';
 import { Setting } from '@src/types';
+import { scrapPeriodically, removeOldPostsPeriodically } from '@main/scrap';
+import { loadSetting } from '@main/window/utilIpc';
 
 export const setting: Setting = { pollingInterval: 5, retention: 3, sites: [] };
 
@@ -14,7 +16,16 @@ if (require('electron-squirrel-startup')) {
  * initialization and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
-app.on('ready', createAppWindow);
+app.on('ready', async () => {
+  await createAppWindow();
+
+  const { pollingInterval, retention, sites } = await loadSetting();
+  setting.pollingInterval = pollingInterval;
+  setting.retention = retention;
+  setting.sites = sites;
+  scrapPeriodically();
+  removeOldPostsPeriodically();
+});
 
 /**
  * Emitted when the application is activated. Various actions can

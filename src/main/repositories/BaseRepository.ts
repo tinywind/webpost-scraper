@@ -21,7 +21,7 @@ abstract class BaseService<KEY, ENTITY = any> {
         .find({})
         .skip(skip)
         .limit(limit)
-        .sort({ createdAt: 1 })
+        .sort({ createdAt: -1 })
         .exec((err, docs) => {
           if (err) reject(err);
           else resolve(docs);

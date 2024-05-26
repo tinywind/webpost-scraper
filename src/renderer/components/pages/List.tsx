@@ -1,39 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { posts } from '@components/pages/testdata';
 import { Post as PostType } from '@src/types';
 import Post from '@components/Post';
 import router from '@renderer/router';
 import { ContextMenu } from 'primereact/contextmenu';
+import util from '@main/window/utilContextApi';
 
 export default function List() {
   const [activeTab, setActiveTab] = useState<'unread' | 'all' | 'marked'>('unread');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<PostType[]>([]);
   const cm = useRef<ContextMenu>(null);
+  const input = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setItems(posts);
+    const intervalId = setInterval(async () => setItems(await util.getPosts()), 10 * 1000);
+    return () => clearInterval(intervalId);
   }, []);
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setSearchQuery(e.currentTarget.value);
-    }
-  };
-
-  const toggleMark = (post: PostType) => {
+  const toggleMark = async (post: PostType) => {
+    post.marked ? await util.unmarkPost(post.url) : await util.markPost(post.url);
     post.marked = !post.marked;
     setItems([...items]);
   };
 
-  const setRead = (post: PostType) => {
+  const setRead = async (post: PostType) => {
+    await util.readPost(post.url);
     post.read = true;
     setItems([...items]);
   };
 
-  const readAll = () => {
+  const readAll = async () => {
+    await util.readPost(items.map(item => item.url));
     items.forEach(item => (item.read = true));
     setItems([...items]);
   };
@@ -57,8 +56,8 @@ export default function List() {
             </div>
             <div className='flex items-center space-x-4'>
               <div>
-                <input type='text' placeholder='Search' className='py-1 px-3 border rounded text-sm' onKeyDown={handleSearch} />
-                <button className='button icon'>
+                <input ref={input} placeholder='Search' className='py-1 px-3 border rounded text-sm' onKeyDown={e => e.key === 'Enter' && setSearchQuery(e.currentTarget.value)} />
+                <button className='button icon' onClick={() => setSearchQuery(input.current.value)}>
                   <FontAwesomeIcon icon={faSearch} />
                 </button>
               </div>
@@ -67,7 +66,7 @@ export default function List() {
               </button>
             </div>
           </div>
-          <div onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
+          <div className='border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
             {items
               .filter(item => {
                 if (activeTab === 'unread') return !item.read;

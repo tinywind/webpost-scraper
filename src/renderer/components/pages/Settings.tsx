@@ -29,7 +29,7 @@ export default function Settings() {
     settingState.setting.sites && setSites(settingState.setting.sites.map(site => cloneSite(site)));
 
     if (process.env.NODE_ENV !== 'development') return;
-    setUrl('https://1bang.kr/ticket-deal');
+    setUrl('https://gall.dcinside.com/board/lists/?id=leagueoflegends6');
   }, []);
 
   const loadSiteData = async (url: string, site?: Site) => {
@@ -45,9 +45,9 @@ export default function Settings() {
         const $ = load(result.html);
         const title = $('title').text();
         let favicon = $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href');
-        if (favicon && !favicon.startsWith('http')) {
-          const urlObject = new URL(url);
-          favicon = `${urlObject.origin}/${favicon}`;
+        if (favicon) {
+          if (favicon.startsWith('//')) favicon = `${url.startsWith('https') ? 'https' : 'http'}:${favicon}`;
+          else if (!favicon.startsWith('http')) favicon = `${new URL(url).origin}/${favicon}`;
         }
 
         if (!site) setSiteData({ id: uuid(), name: title ?? url, url, html: result.html, favicon });
