@@ -1,7 +1,7 @@
 {
   "name": "webpost-scraper",
   "productName": "Webpost Scraper",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Webpost Scraper is an Electron application designed for collecting posts from websites. application for effective web scraping.",
   "main": ".webpack/main",
   "scripts": {

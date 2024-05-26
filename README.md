@@ -2,6 +2,10 @@
 
 Webpost Scraper is a Windows-based Electron application designed to collect posts from websites. The primary goal of this project is to develop an Electron application for Windows that can efficiently scrape and collect posts from various websites. This application was inspired by [wepplication tools scrapper](https://wepplication.github.io/tools/scrapper/).
 
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+
 ## Getting Started
 
 To get started with Webpost Scraper, follow these steps:
