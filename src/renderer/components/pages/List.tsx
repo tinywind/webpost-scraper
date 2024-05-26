@@ -40,8 +40,8 @@ export default function List() {
   return (
     <>
       <ContextMenu model={[{ label: 'Clear', icon: 'pi pi-check', command: readAll }]} ref={cm} breakpoint='767px' />
-      <div className='p-4 min-h-screen'>
-        <div className='max-w-2xl mx-auto'>
+      <div className='p-4 relative' style={{ height: 'calc(100% - 2rem)' }}>
+        <div className='flex flex-col relative h-full max-w-2xl mx-auto'>
           <div className='flex justify-between items-center mb-4'>
             <div className='text-lg font-bold'>
               <button className={`button px-3 py-2 ${activeTab === 'unread' ? 'font-extrabold button-active-bgcolor' : ''}`} onClick={() => setActiveTab('unread')}>
@@ -66,7 +66,7 @@ export default function List() {
               </button>
             </div>
           </div>
-          <div className='border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
+          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
             {items
               .filter(item => {
                 if (activeTab === 'unread') return !item.read;

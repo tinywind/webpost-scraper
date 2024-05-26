@@ -106,10 +106,10 @@ export default function Settings() {
 
   return (
     <>
-      <div className='p-4 min-h-screen'>
-        <div className='max-w-2xl mx-auto'>
+      <div className='p-4 relative' style={{ height: 'calc(100% - 2rem)' }}>
+        <div className='flex flex-col relative h-full max-w-2xl mx-auto'>
           <div className='flex justify-between items-center mb-2'>
-            <h1 className='text-md font-bold text-gray-700'>Crawler Settings</h1>
+            <h1 className='text-md font-bold text-gray-700'>Scraper Settings</h1>
             <div className='flex gap-2'>
               <button onClick={exportSettings} className='button icon'>
                 <FontAwesomeIcon icon={faDownload} />
@@ -123,7 +123,7 @@ export default function Settings() {
               </button>
             </div>
           </div>
-          <div className='border-t border-gray-300 mt-4 mb-4 pt-4'>
+          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4'>
             <h2 className='text-sm font-bold text-gray-700 mb-2'>Update Interval</h2>
             <div className='flex gap-2 mb-4'>
               {[
@@ -157,17 +157,17 @@ export default function Settings() {
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
-            <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border rounded text-sm' />
-            <button disabled={loading} onClick={() => loadSiteData(url)} className='button'>
-              {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
-            </button>
+            <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
+              <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border rounded text-sm' />
+              <button disabled={loading} onClick={() => loadSiteData(url)} className='button'>
+                {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
+              </button>
+            </div>
+            {sites.map((site, index) => (
+              <SiteItem key={index} site={site} />
+            ))}
           </div>
-          {sites.map((site, index) => (
-            <SiteItem key={index} site={site} />
-          ))}
         </div>
       </div>
       {siteData && (
