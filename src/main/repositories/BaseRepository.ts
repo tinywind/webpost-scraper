@@ -1,4 +1,4 @@
-import Datastore from 'nedb';
+import Datastore from '@seald-io/nedb';
 
 export const DATABASE_NAME = 'scraper';
 export const SCHEMA_VERSION = 1;
@@ -16,63 +16,28 @@ abstract class BaseService<KEY, ENTITY = any> {
   }
 
   async findAll({ limit, skip }: { limit?: number; skip?: number } = {}): Promise<ENTITY[]> {
-    return new Promise((resolve, reject) => {
-      this.database
-        .find({})
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .exec((err, docs) => {
-          if (err) reject(err);
-          else resolve(docs);
-        });
-    });
+    return await this.database.findAsync({}).skip(skip).limit(limit).sort({ createdAt: -1 });
   }
 
   async find(key: KEY): Promise<ENTITY> {
-    return new Promise((resolve, reject) => {
-      this.database.findOne({ _id: key }, (err, doc) => {
-        if (err) reject(err);
-        else resolve(doc);
-      });
-    });
+    return await this.database.findOneAsync({ _id: key });
   }
 
   async insert(entity: ENTITY | Array<ENTITY>): Promise<(ENTITY & { _id: KEY })[]> {
     const entities = (Array.isArray(entity) ? entity : [entity]).map(e => ({ ...e, _id: e[this.keyColumnName] as KEY }));
-    return new Promise((resolve, reject) => {
-      this.database.insert(entities, (err, docs) => {
-        if (err) reject(err);
-        else resolve(docs);
-      });
-    });
+    return await this.database.insertAsync(entities);
   }
 
   async update(key: KEY, entity: ENTITY): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.database.update({ _id: key }, entity, {}, (err, numReplaced) => {
-        if (err) reject(err);
-        else resolve(numReplaced);
-      });
-    });
+    return (await this.database.updateAsync({ _id: key }, entity, {})).numAffected;
   }
 
   async delete(key: KEY): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.database.remove({ _id: key }, {}, (err, numRemoved) => {
-        if (err) reject(err);
-        else resolve(numRemoved);
-      });
-    });
+    return await this.database.removeAsync({ _id: key }, {});
   }
 
   async clear(): Promise<number> {
-    return new Promise((resolve, reject) => {
-      this.database.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) reject(err);
-        else resolve(numRemoved);
-      });
-    });
+    return await this.database.removeAsync({}, { multi: true });
   }
 }
 
