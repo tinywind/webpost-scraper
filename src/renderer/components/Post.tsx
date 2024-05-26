@@ -43,7 +43,7 @@ const Post = React.memo(
         ref={ref}
         key={index}
         onClick={async () => {
-          await navigator.open_url(post.url);
+          await navigator.openUrl(post.url);
           onClick?.(post);
         }}
         className={classNames('flex items-center mb-2 p-2 border rounded shadow-sm app-bgcolor hover:shadow-md transition-colors duration-200 button-hover-bgcolor')}

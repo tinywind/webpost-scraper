@@ -12,6 +12,6 @@
 
 import { NavigatorContextApi } from './navigatorContext';
 
-const navigator: NavigatorContextApi = (window as any).electron_window?.navigator;
+const navigator: NavigatorContextApi = (window as any).electronApi?.navigator;
 
 export default navigator;

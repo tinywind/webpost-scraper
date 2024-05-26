@@ -29,7 +29,7 @@ const WindowControls: React.FC<Props> = props => {
   return (
     <section className={classNames('window-navigator-controls', `type-${props.platform}`)}>
       <ControlButton name='minimize' onClick={() => navigator.minimize()} path={minimizePath} title={props.tooltips ? 'Minimize' : null} />
-      <ControlButton name='maximize' onClick={() => navigator.toggle_maximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : null} />
+      <ControlButton name='maximize' onClick={() => navigator.toggleMaximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : null} />
       <ControlButton name='close' onClick={() => navigator.exit()} path={closePath} title={props.tooltips ? 'Close' : null} />
     </section>
   );

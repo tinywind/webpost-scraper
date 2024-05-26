@@ -153,7 +153,7 @@ const Navigator: React.FC<Props> = props => {
                       onClick={() => (typeof menuItem.action === 'function' ? (menuItem.action(menuItem.value), closeActiveMenu()) : handleAction(menuItem.action, menuItem.value))}
                       onMouseDown={e => e.preventDefault()}>
                       <div className='popup-item-name'>{menuItem.name}</div>
-                      <div className='popup-item-shortcut'>{menuItem.shortcut}</div>
+                      <div className='popup-item-shortcut'>{typeof menuItem.shortcut === 'string' ? menuItem.shortcut : menuItem.shortcut?.label}</div>
                     </div>
                   ),
                 )}

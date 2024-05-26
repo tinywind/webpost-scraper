@@ -20,12 +20,10 @@ export default function List() {
   const hidden = (post: PostType) => (activeTab === 'unread' && post.read) || (activeTab === 'marked' && !post.marked) || !post.title.includes(searchQuery);
 
   useEffect(() => {
-    console.log('[setHiddenState] activeTab changed');
     setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
   }, [activeTab]);
 
   useEffect(() => {
-    console.log('[setHiddenState] searchQuery changed');
     setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
   }, [searchQuery]);
 
@@ -39,7 +37,6 @@ export default function List() {
         const newItems = newPosts.filter(post => !prevUrls.has(post.url));
         const updating = [...newItems, ...prevItems.filter(item => newPostsMap.has(item.url))];
 
-        console.log('[setHiddenState] updating items');
         setHiddenState(prevItems => ({ ...prevItems, ...newItems.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}) }));
 
         return updating;
@@ -54,7 +51,6 @@ export default function List() {
     post.marked = !post.marked;
     setItems(prev => [...prev]);
 
-    console.log('[setHiddenState] toggleMark');
     setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
   };
 
@@ -63,7 +59,6 @@ export default function List() {
     post.read = true;
     setItems(prev => [...prev]);
 
-    console.log('[setHiddenState] setRead');
     setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
   };
 
@@ -71,7 +66,6 @@ export default function List() {
     await util.readPost(items.map(item => item.url));
     setItems(prev => prev.map((e: PostType) => ({ ...e, read: true })));
 
-    console.log('[setHiddenState] readAll');
     setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
   };
 
@@ -83,13 +77,13 @@ export default function List() {
           <div className='flex justify-between items-center mb-4'>
             <div className='text-lg font-bold'>
               <button className={`button px-3 py-2 ${activeTab === 'unread' ? 'font-extrabold button-active-bgcolor' : ''}`} onClick={() => setActiveTab('unread')}>
-                읽지 않음 ({items.filter(item => !item.read).length})
+                Unread ({items.filter(item => !item.read).length})
               </button>
               <button className={`button px-3 py-2 ${activeTab === 'all' ? 'font-extrabold button-active-bgcolor' : ''}`} onClick={() => setActiveTab('all')}>
-                전체 ({items.length})
+                All ({items.length})
               </button>
               <button className={`button px-3 py-2 ${activeTab === 'marked' ? 'font-extrabold button-active-bgcolor' : ''}`} onClick={() => setActiveTab('marked')}>
-                marked ({items.filter(item => item.marked).length})
+                Marked ({items.filter(item => item.marked).length})
               </button>
             </div>
             <div className='flex items-center space-x-4'>

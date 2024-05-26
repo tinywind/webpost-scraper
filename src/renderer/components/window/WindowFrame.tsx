@@ -13,6 +13,7 @@
 import React, { useEffect, useRef } from 'react';
 import Navigator from './Navigator';
 import logo from '@assets/images/logo.png';
+import router from '@renderer/router';
 
 type Props = {
   title?: string;
@@ -45,11 +46,8 @@ const WindowFrame: React.FC<Props> = props => {
 
   return (
     <WindowContext.Provider value={{ platform: props.platform }}>
-      {/* Reference creator */}
       <div className='start-electron-window' ref={itsRef}></div>
-      {/* Window Navigator */}
       <Navigator title={props.title ?? 'Electron Window'} mode='centered-title' icon={logo} />
-      {/* Window Content (Application to render) */}
       <div className='window-content'>{props.children}</div>
     </WindowContext.Provider>
   );
