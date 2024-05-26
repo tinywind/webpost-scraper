@@ -33,14 +33,33 @@ To start the application, use the following command:
 pnpm start
 ```
 
+## Main Features
+
+- **Post Scraping:** Automatically scrape and collect posts from specified websites.
+- **Custom Shortcuts:** Support for custom keyboard shortcuts to enhance user experience.
+- **Dark Mode:** Utilize `prefers-color-scheme` to enable dark mode.
+- **Notification System:** Built-in notifications to alert users of key events or updates.
+- **Redux Integration:** State management using Redux to handle application state efficiently.
+- **React Router:** Use of `react-router-dom` for routing and navigation within the application.
+- **Responsive Design:** Layout adjustments to support different screen sizes and resolutions.
+- **Database Integration:** Use of `nedb` (main thread) for persistent storage.
+
+## Frameworks and Libraries
+
+- **Electron:** The main framework for building the cross-platform desktop application.
+- **React:** For building the user interface.
+- **Redux:** For state management.
+- **React Router:** For handling routing within the application.
+- **Tailwind CSS:** For styling the application.
+- **nedb:** For lightweight database operations in the main process.
+
 ## License
 
 This project is licensed under the MIT License.
 
 ## Acknowledgements
 
-This project was created using the [electron-react-webpack-typescript-2024](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template.
-See the [LICENSE](https://raw.githubusercontent.com/codesbiome/electron-react-webpack-typescript-2024/master/LICENSE) file for details.
+This project was created using the [electron-react-webpack-typescript-2024](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template. See the [LICENSE](https://raw.githubusercontent.com/codesbiome/electron-react-webpack-typescript-2024/master/LICENSE) file for details.
 
 ## Favicon Copyright Notice
 
