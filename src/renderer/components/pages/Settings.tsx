@@ -160,7 +160,7 @@ export default function Settings() {
 
             <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
               <input value={url} onChange={e => setUrl(e.target.value)} placeholder='Enter website URL to crawl' className='flex-1 p-1 border rounded text-sm' />
-              <button disabled={loading} onClick={() => loadSiteData(url)} className='button'>
+              <button disabled={loading} onClick={() => loadSiteData(url)} className='button icon'>
                 {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
               </button>
             </div>

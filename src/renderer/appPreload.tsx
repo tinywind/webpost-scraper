@@ -1,5 +1,7 @@
 import '@main/window/windowPreload';
-import router from '@renderer/router';
+import { Setting } from '@src/types';
+
+const setting: Setting = { pollingInterval: 5, retention: 3, sites: [] };
 
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');
@@ -23,5 +25,5 @@ window.addEventListener('DOMContentLoaded', () => {
     if (v) versions[type] = v.replace('^', '');
   }
 
-  app.setAttribute('data-versions', JSON.stringify(versions));
+  app?.setAttribute('data-versions', JSON.stringify(versions));
 });

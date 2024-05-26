@@ -128,6 +128,9 @@ button {
     color: var(--button-active-color);
     @apply shadow-inner font-bold;
   }
+  &.icon, &.icon-only {
+    @apply border-none py-2;
+  }
   &.icon-only {
     &:not(:hover) {
       background-color: transparent;

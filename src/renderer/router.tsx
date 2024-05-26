@@ -5,7 +5,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 const ErrorElement = () => {
   useEffect(() => {
-    router.navigate('/settings');
+    router.navigate('/list');
   }, []);
   return <></>;
 };
@@ -13,6 +13,16 @@ const ErrorElement = () => {
 const router = createBrowserRouter([
   {
     path: '/app_window',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '/',
     element: <ListPage />,
     errorElement: <ErrorElement />,
   },
