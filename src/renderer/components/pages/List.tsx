@@ -64,9 +64,11 @@ export default function List() {
 
   const readAll = async () => {
     await util.readPost(items.map(item => item.url));
-    setItems(prev => prev.map((e: PostType) => ({ ...e, read: true })));
-
-    setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
+    setItems(prev => {
+      const items = [...prev.map((e: PostType) => ({ ...e, read: true }))];
+      setHiddenState(items.reduce((acc, item) => ({ ...acc, [item.url]: hidden(item) }), {}));
+      return items;
+    });
   };
 
   return (
