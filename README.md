@@ -33,6 +33,10 @@ To start the application, use the following command:
 pnpm start
 ```
 
+### Running the Application on Windows x64
+
+For Windows x64 environments, you can also run the program using the setup file available in the releases section of the GitHub repository. Download the setup file from [here](https://github.com/tinywind/webpost-scraper/releases) and follow the installation instructions.
+
 ## Main Features
 
 - **Post Scraping:** Automatically scrape and collect posts from specified websites.
