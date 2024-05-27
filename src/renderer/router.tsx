@@ -1,26 +1,41 @@
-import React, { useEffect, ReactNode } from 'react';
+import React, { useEffect } from 'react';
 import ListPage from '@pages/list';
 import SettingsPage from '@pages/settings';
 import { createBrowserRouter } from 'react-router-dom';
 
-const router = createBrowserRouter(
-  [
-    { paths: ['', '/', '/list', '/app_window'], element: <ListPage /> },
-    { paths: '/settings', element: <SettingsPage /> },
-  ]
-    .map(({ paths, element }) =>
-      (Array.isArray(paths) ? paths : [paths]).map(path => ({
-        path,
-        element: element,
-        errorElement: () => {
-          useEffect(() => {
-            router.navigate('/list');
-          }, []);
-          return <></>;
-        },
-      })),
-    )
-    .flat() as { path: string }[],
-);
+const ErrorElement = () => {
+  useEffect(() => {
+    router.navigate('/list');
+  }, []);
+  return <></>;
+};
+
+const router = createBrowserRouter([
+  {
+    path: '/app_window',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '/',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '/list',
+    element: <ListPage />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: '/settings',
+    element: <SettingsPage />,
+    errorElement: <ErrorElement />,
+  },
+]);
 
 export default router;
