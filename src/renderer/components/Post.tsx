@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, Key, useContext, Context, createContext } from 'react';
+import React, { useEffect, useRef, Key, useContext, Context, createContext, MouseEventHandler } from 'react';
 import navigator from '@main/window/navigatorContextApi';
-import { Post as PostType } from '@src/types';
+import { Post, Post as PostType } from '@src/types';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -13,10 +13,12 @@ const Post = React.memo(
     onClick,
     toggleMark,
     hiddenContext,
+    onContextMenu,
   }: {
     post: PostType;
     index?: Key;
     onClick?: (post: PostType) => unknown;
+    onContextMenu?: (e: React.MouseEvent<HTMLElement>, post: Post) => unknown;
     toggleMark?: (post: PostType) => unknown;
     hiddenContext?: Context<{ [key: string]: boolean }>;
   }) {
@@ -46,6 +48,7 @@ const Post = React.memo(
           await navigator.openUrl(post.url);
           onClick?.(post);
         }}
+        onContextMenu={e => onContextMenu?.(e, post)}
         className={classNames('flex items-center mb-2 p-2 border rounded shadow-sm app-bgcolor hover:shadow-md transition-colors duration-200 button-hover-bgcolor')}
         rel='noreferrer'>
         {post.site.favicon && <img src={post.site.favicon} alt='favicon' className='w-4 h-4 mr-2' />}

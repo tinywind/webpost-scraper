@@ -101,4 +101,5 @@ export const registerUtilIpc = () => {
   ipcMain.handle('repository:post:read', async (_, url: string | string[]) => await postRepository.read(url));
   ipcMain.handle('repository:post:mark', async (_, url) => await postRepository.mark(url));
   ipcMain.handle('repository:post:unmark', async (_, url) => await postRepository.unmark(url));
+  ipcMain.handle('repository:post:delete', async (_, url: string | string[]) => await postRepository.delete(url));
 };

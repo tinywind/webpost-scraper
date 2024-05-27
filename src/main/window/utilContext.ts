@@ -20,6 +20,7 @@ const utilContext = {
   markPost: async (url: string) => ipcRenderer.invoke('repository:post:mark', url),
   unmarkPost: async (url: string) => ipcRenderer.invoke('repository:post:unmark', url),
   setOnNavigateAction: (callback: (path: string) => void) => ipcRenderer.on('navigate', (_event, value) => callback(value)),
+  deletePost: (url: string | string[]) => ipcRenderer.invoke('repository:post:delete', url),
 };
 
 export type UtilContextApi = typeof utilContext;

@@ -20,6 +20,10 @@ class PostRepository extends BaseService<string, Type> {
     return (await this.database.updateAsync({ $or: (Array.isArray(url) ? url : [url]).map(u => ({ _id: u })) }, { $set: { read: true } }, { multi: true })).numAffected;
   }
 
+  async delete(url: string | string[]) {
+    return await this.database.removeAsync({ $or: (Array.isArray(url) ? url : [url]).map(u => ({ _id: u })) }, { multi: true });
+  }
+
   async mark(url: string) {
     return (await this.database.updateAsync({ _id: url }, { $set: { marked: true } }, { multi: true })).numAffected;
   }

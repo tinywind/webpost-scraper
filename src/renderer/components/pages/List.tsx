@@ -14,7 +14,10 @@ export default function List() {
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<PostType[]>([]);
   const [hiddenState, setHiddenState] = useState<{ [key: string]: boolean }>({});
-  const cm = useRef<ContextMenu>(null);
+  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+  const unreadContextMenu = useRef<ContextMenu>(null);
+  const allContextMenu = useRef<ContextMenu>(null);
+  const markedContextMenu = useRef<ContextMenu>(null);
   const input = useRef<HTMLInputElement>(null);
 
   const hidden = (post: PostType) => (activeTab === 'unread' && post.read) || (activeTab === 'marked' && !post.marked) || !post.title.includes(searchQuery);
@@ -46,22 +49,6 @@ export default function List() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const toggleMark = async (post: PostType) => {
-    post.marked ? await util.unmarkPost(post.url) : await util.markPost(post.url);
-    post.marked = !post.marked;
-    setItems(prev => [...prev]);
-
-    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
-  };
-
-  const setRead = async (post: PostType) => {
-    await util.readPost(post.url);
-    post.read = true;
-    setItems(prev => [...prev]);
-
-    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
-  };
-
   const readAll = async () => {
     await util.readPost(items.map(item => item.url));
     setItems(prev => {
@@ -71,9 +58,77 @@ export default function List() {
     });
   };
 
+  const deleteAllWithoutMarked = async () => {
+    await util.deletePost(items.filter(item => !item.marked).map(item => item.url));
+    setItems(prev => prev.filter(item => item.marked));
+  };
+
+  const toggleMark = async (input?: PostType) => {
+    const post = input || selectedPost;
+    if (!post) return;
+
+    post.marked ? await util.unmarkPost(post.url) : await util.markPost(post.url);
+    post.marked = !post.marked;
+    setItems(prev => [...prev]);
+
+    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
+  };
+
+  const setRead = async (input: PostType) => {
+    const post = input || selectedPost;
+    if (!post) return;
+
+    await util.readPost(post.url);
+    post.read = true;
+    setItems(prev => [...prev]);
+
+    setHiddenState(prevState => ({ ...prevState, [post.url]: hidden(post) }));
+  };
+
+  const remove = async (input?: PostType) => {
+    const post = input || selectedPost;
+    if (!post) return;
+
+    await util.deletePost(post.url);
+    setItems(prev => prev.filter(item => item.url !== post.url));
+  };
+
+  const onContextMenu = (e: React.MouseEvent<HTMLElement>, post: PostType) => {
+    setSelectedPost(post);
+    if (activeTab === 'all') allContextMenu.current.show(e);
+    if (activeTab === 'marked') markedContextMenu.current.show(e);
+    if (activeTab === 'unread') unreadContextMenu.current.show(e);
+  };
+
   return (
     <>
-      <ContextMenu model={[{ label: 'Clear', icon: 'pi pi-check', command: readAll }]} ref={cm} breakpoint='767px' />
+      <ContextMenu
+        model={[
+          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
+          { label: 'Clear', icon: 'pi pi-check', command: readAll },
+          { label: 'Delete All without Marked', icon: 'pi pi-refresh', command: deleteAllWithoutMarked },
+        ]}
+        ref={unreadContextMenu}
+        breakpoint='767px'
+      />
+      <ContextMenu
+        model={[
+          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
+          { label: 'Delete All without Marked', icon: 'pi pi-refresh', command: deleteAllWithoutMarked },
+        ]}
+        ref={allContextMenu}
+        breakpoint='767px'
+      />
+      <ContextMenu
+        model={[
+          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
+        ]}
+        ref={markedContextMenu}
+        breakpoint='767px'
+      />
       <div className='p-4 relative' style={{ height: 'calc(100% - 2rem)' }}>
         <div className='flex flex-col relative h-full max-w-2xl mx-auto'>
           <div className='flex justify-between items-center mb-4'>
@@ -100,10 +155,10 @@ export default function List() {
               </button>
             </div>
           </div>
-          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && cm.current.show(e)}>
+          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && unreadContextMenu.current.show(e)}>
             <HiddenContext.Provider value={hiddenState}>
               {items.map(item => (
-                <Post key={item.url} index={item.url} post={item} onClick={setRead} toggleMark={toggleMark} hiddenContext={HiddenContext} />
+                <Post key={item.url} index={item.url} post={item} onClick={setRead} toggleMark={toggleMark} hiddenContext={HiddenContext} onContextMenu={onContextMenu} />
               ))}
             </HiddenContext.Provider>
           </div>
