@@ -7,10 +7,12 @@ import router from '@renderer/router';
 import { ContextMenu } from 'primereact/contextmenu';
 import util from '@main/window/utilContextApi';
 
+export type Tab = 'unread' | 'all' | 'marked';
 export const HiddenContext = createContext<{ [key: string]: boolean }>({});
+export const ActiveTabContext = createContext<Tab>('unread');
 
 export default function List() {
-  const [activeTab, setActiveTab] = useState<'unread' | 'all' | 'marked'>('unread');
+  const [activeTab, setActiveTab] = useState<Tab>('unread');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<PostType[]>([]);
   const [hiddenState, setHiddenState] = useState<{ [key: string]: boolean }>({});
@@ -93,7 +95,7 @@ export default function List() {
     setItems(prev => prev.filter(item => item.url !== post.url));
   };
 
-  const onContextMenu = (e: React.MouseEvent<HTMLElement>, post: PostType) => {
+  const onContextMenu = (e: React.MouseEvent<HTMLElement>, post: PostType, activeTab: Tab) => {
     setSelectedPost(post);
     if (activeTab === 'all') allContextMenu.current.show(e);
     if (activeTab === 'marked') markedContextMenu.current.show(e);
@@ -104,27 +106,27 @@ export default function List() {
     <>
       <ContextMenu
         model={[
-          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
-          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
+          { label: 'Toggle Mark', icon: 'pi pi-bookmark', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-trash', command: () => remove() },
           { label: 'Clear', icon: 'pi pi-check', command: readAll },
-          { label: 'Delete All without Marked', icon: 'pi pi-refresh', command: deleteAllWithoutMarked },
+          { label: 'Delete All without Marked', icon: 'pi pi-filter-slash', command: deleteAllWithoutMarked },
         ]}
         ref={unreadContextMenu}
         breakpoint='767px'
       />
       <ContextMenu
         model={[
-          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
-          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
-          { label: 'Delete All without Marked', icon: 'pi pi-refresh', command: deleteAllWithoutMarked },
+          { label: 'Toggle Mark', icon: 'pi pi-bookmark', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-trash', command: () => remove() },
+          { label: 'Delete All without Marked', icon: 'pi pi-filter-slash', command: deleteAllWithoutMarked },
         ]}
         ref={allContextMenu}
         breakpoint='767px'
       />
       <ContextMenu
         model={[
-          { label: 'Toggle Mark', icon: 'pi pi-refresh', command: e => toggleMark() },
-          { label: 'Delete', icon: 'pi pi-refresh', command: () => remove() },
+          { label: 'Toggle Mark', icon: 'pi pi-bookmark', command: e => toggleMark() },
+          { label: 'Delete', icon: 'pi pi-trash', command: () => remove() },
         ]}
         ref={markedContextMenu}
         breakpoint='767px'
@@ -155,12 +157,23 @@ export default function List() {
               </button>
             </div>
           </div>
-          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4' onContextMenu={e => activeTab === 'unread' && unreadContextMenu.current.show(e)}>
-            <HiddenContext.Provider value={hiddenState}>
-              {items.map(item => (
-                <Post key={item.url} index={item.url} post={item} onClick={setRead} toggleMark={toggleMark} hiddenContext={HiddenContext} onContextMenu={onContextMenu} />
-              ))}
-            </HiddenContext.Provider>
+          <div className='flex-grow overflow-auto border-t border-gray-300 mt-4 mb-4 pt-4'>
+            <ActiveTabContext.Provider value={activeTab}>
+              <HiddenContext.Provider value={hiddenState}>
+                {items.map(item => (
+                  <Post
+                    key={item.url}
+                    index={item.url}
+                    post={item}
+                    onClick={setRead}
+                    onContextMenu={onContextMenu}
+                    toggleMark={toggleMark}
+                    hiddenContext={HiddenContext}
+                    activeTabContext={ActiveTabContext}
+                  />
+                ))}
+              </HiddenContext.Provider>
+            </ActiveTabContext.Provider>
           </div>
         </div>
       </div>

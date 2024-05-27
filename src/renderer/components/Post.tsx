@@ -5,26 +5,30 @@ import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faCheck } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
+import { ActiveTabContext, Tab } from '@components/pages/List';
 
 const Post = React.memo(
   function Post({
     post,
     index,
     onClick,
+    onContextMenu,
     toggleMark,
     hiddenContext,
-    onContextMenu,
+    activeTabContext,
   }: {
     post: PostType;
     index?: Key;
     onClick?: (post: PostType) => unknown;
-    onContextMenu?: (e: React.MouseEvent<HTMLElement>, post: Post) => unknown;
+    onContextMenu?: (e: React.MouseEvent<HTMLElement>, post: Post, activeTab: Tab) => unknown;
     toggleMark?: (post: PostType) => unknown;
     hiddenContext?: Context<{ [key: string]: boolean }>;
+    activeTabContext?: Context<Tab>;
   }) {
     const ref = useRef<HTMLAnchorElement>(null);
     const hiddenState = useContext(hiddenContext || createContext<{ [key: string]: boolean }>({}));
     const hidden = hiddenState[post.url];
+    const activeTab = useContext(activeTabContext || createContext<Tab>('all'));
 
     const setHidden = () => {
       if (hidden) ref.current?.classList.add('hidden');
@@ -48,7 +52,7 @@ const Post = React.memo(
           await navigator.openUrl(post.url);
           onClick?.(post);
         }}
-        onContextMenu={e => onContextMenu?.(e, post)}
+        onContextMenu={e => onContextMenu?.(e, post, activeTab)}
         className={classNames('flex items-center mb-2 p-2 border rounded shadow-sm app-bgcolor hover:shadow-md transition-colors duration-200 button-hover-bgcolor')}
         rel='noreferrer'>
         {post.site.favicon && <img src={post.site.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
