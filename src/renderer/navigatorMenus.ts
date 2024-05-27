@@ -1,7 +1,8 @@
+export type Shortcut = { label: string; ctrl?: boolean; alt?: boolean; shift?: boolean; key: string };
 export type MenuItem = {
   name: string;
   action?: string | ((value?: string | number) => unknown);
-  shortcut?: string | { label: string; ctrl?: boolean; alt?: boolean; shift?: boolean; key: string };
+  shortcut?: string | Shortcut;
   value?: string | number;
   items?: MenuItem[];
 };
@@ -10,6 +11,17 @@ export type Menu = {
   name: string;
   items: MenuItem[];
 };
+
+export const allowedDefaultShortcuts: Shortcut[] = [
+  { label: 'Copy', ctrl: true, key: 'C' },
+  { label: 'Paste', ctrl: true, key: 'V' },
+  { label: 'Cut', ctrl: true, key: 'X' },
+  { label: 'Select All', ctrl: true, key: 'A' },
+  { label: 'Undo', ctrl: true, key: 'Z' },
+  { label: 'Redo', ctrl: true, shift: true, key: 'Z' },
+  { label: 'Find', ctrl: true, key: 'F' },
+  { label: 'Close', alt: true, key: 'F4' },
+];
 
 const navigatorMenus: Menu[] = [
   {

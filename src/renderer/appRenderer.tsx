@@ -7,7 +7,7 @@ import { RouterProvider } from 'react-router-dom';
 import router from '@renderer/router';
 import navigator from '@main/window/navigatorContextApi';
 import util from '@main/window/utilContextApi';
-import navigatorMenus from '@renderer/navigatorMenus';
+import navigatorMenus, { Shortcut } from '@renderer/navigatorMenus';
 
 library.add(fas);
 
@@ -38,7 +38,7 @@ setNavigateAction();
 document.addEventListener('keyup', e => {
   const menus = navigatorMenus.flatMap(e => e.items).filter(e => e.shortcut && typeof e.shortcut !== 'string' && e.shortcut.key);
   menus.forEach(menu => {
-    const shortcut = menu.shortcut as { label: string; ctrl?: boolean; alt?: boolean; shift?: boolean; key: string };
+    const shortcut = menu.shortcut as Shortcut;
     const isCtrlMatch = (shortcut.ctrl && e.ctrlKey) || (!shortcut.ctrl && !e.ctrlKey);
     const isAltMatch = (shortcut.alt && e.altKey) || (!shortcut.alt && !e.altKey);
     const isShiftMatch = (shortcut.shift && e.shiftKey) || (!shortcut.shift && !e.shiftKey);

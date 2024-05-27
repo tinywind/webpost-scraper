@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { registerNavigatorIpc } from '@main/window/navigatorIpc';
 import { registerUtilIpc } from '@main/window/utilIpc';
-import navigatorMenus from '@renderer/navigatorMenus';
+import navigatorMenus, { allowedDefaultShortcuts, Shortcut } from '@renderer/navigatorMenus';
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -52,17 +52,18 @@ export async function createAppWindow(): Promise<BrowserWindow> {
 
   appWindow.webContents.on('before-input-event', (event, input) => {
     const menus = navigatorMenus.flatMap(e => e.items).filter(e => e.shortcut && typeof e.shortcut !== 'string' && e.shortcut.key);
-    const isShortcut = menus.some(menu => {
-      const shortcut = menu.shortcut as { label: string; ctrl?: boolean; alt?: boolean; shift?: boolean; key: string };
+    const matched = (shortcut: Shortcut) => {
       const isCtrlMatch = (shortcut.ctrl && input.control) || (!shortcut.ctrl && !input.control);
       const isAltMatch = (shortcut.alt && input.alt) || (!shortcut.alt && !input.alt);
       const isShiftMatch = (shortcut.shift && input.shift) || (!shortcut.shift && !input.shift);
       const isKeyMatch = shortcut.key === input.key || shortcut.key === input.code;
       return isCtrlMatch && isAltMatch && isShiftMatch && isKeyMatch;
-    });
+    };
+    const isShortcut = menus.some(menu => matched(menu.shortcut as Shortcut));
+    const isAllowedDefaultShortcut = allowedDefaultShortcuts.some(shortcut => matched(shortcut));
 
     const keysToBlock = [...Array.from({ length: 12 }, (_, i) => `F${i + 1}`)];
-    if (!isShortcut && (input.control || input.alt || input.shift || keysToBlock.includes(input.key))) {
+    if (!isShortcut && !isAllowedDefaultShortcut && (input.control || input.alt || input.shift || keysToBlock.includes(input.key))) {
       event.preventDefault();
       console.log(`Blocked key: ${input.key}`);
     }
