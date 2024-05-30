@@ -62,13 +62,14 @@ export default function Settings() {
     }
   };
 
-  const exportSettings = () => util.exportSettings({ pollingInterval: pollingIntervalState, retention: retentionState, sites: sites.map(site => cloneSite(site)) });
+  const exportSettings = () => util.exportSettings({ theme: 'system', pollingInterval: pollingIntervalState, retention: retentionState, sites: sites.map(site => cloneSite(site)) });
   const importSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = async () => {
         const setting = JSON.parse(reader.result as string) as {
+          theme: 'system' | 'light' | 'dark';
           pollingInterval: number;
           retention: number;
           sites: Site[];

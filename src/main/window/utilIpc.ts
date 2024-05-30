@@ -14,9 +14,9 @@ export type FetchResult = {
 };
 
 export const loadSetting = async () => {
-  const { pollingInterval, retention } = await attributeRepository.get();
+  const { theme, pollingInterval, retention } = await attributeRepository.get();
   const sites = await siteRepository.findAll();
-  return { pollingInterval, retention, sites };
+  return { theme, pollingInterval, retention, sites };
 };
 
 export const registerUtilIpc = () => {
@@ -53,15 +53,28 @@ export const registerUtilIpc = () => {
       });
   });
 
-  ipcMain.handle('dark-mode:toggle', () => (nativeTheme.themeSource = nativeTheme.shouldUseDarkColors ? 'light' : 'dark'));
-  ipcMain.handle('dark-mode:dark', () => (nativeTheme.themeSource = 'dark'));
-  ipcMain.handle('dark-mode:light', () => (nativeTheme.themeSource = 'light'));
-  ipcMain.handle('dark-mode:system', () => (nativeTheme.themeSource = 'system'));
+  ipcMain.handle('dark-mode:toggle', async () => {
+    nativeTheme.themeSource = nativeTheme.shouldUseDarkColors ? 'light' : 'dark';
+    await attributeRepository.setTheme(nativeTheme.themeSource);
+  });
+  ipcMain.handle('dark-mode:dark', async () => {
+    nativeTheme.themeSource = 'dark';
+    await attributeRepository.setTheme('dark');
+  });
+  ipcMain.handle('dark-mode:light', async () => {
+    nativeTheme.themeSource = 'light';
+    await attributeRepository.setTheme('light');
+  });
+  ipcMain.handle('dark-mode:system', async () => {
+    nativeTheme.themeSource = 'system';
+    await attributeRepository.setTheme('system');
+  });
   ipcMain.handle('repository:save', async (_, _setting: Setting) => {
-    await attributeRepository.save(_setting.pollingInterval, _setting.retention);
+    await attributeRepository.save(_setting.theme, _setting.pollingInterval, _setting.retention);
     await siteRepository.clear();
     await siteRepository.insert(_setting.sites);
 
+    setting.theme = _setting.theme;
     setting.pollingInterval = _setting.pollingInterval;
     setting.retention = _setting.retention;
     setting.sites = _setting.sites;

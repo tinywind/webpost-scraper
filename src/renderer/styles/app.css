@@ -128,7 +128,8 @@ button {
     color: var(--button-active-color);
     @apply shadow-inner font-bold;
   }
-  &.icon, &.icon-only {
+  &.icon,
+  &.icon-only {
     @apply border-none py-2;
   }
   &.icon-only {
@@ -142,7 +143,6 @@ button {
 .modal {
   background-color: var(--app-bgcolor);
 }
-
 
 .app-accent-color {
   color: var(--app-accent-color);

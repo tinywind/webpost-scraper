@@ -1,7 +1,7 @@
 import '@main/window/windowPreload';
 import { Setting } from '@src/types';
 
-const setting: Setting = { pollingInterval: 5, retention: 3, sites: [] };
+const setting: Setting = { theme: 'system', pollingInterval: 5, retention: 3, sites: [] };
 
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');

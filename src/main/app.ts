@@ -1,10 +1,10 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeTheme } from 'electron';
 import { createAppWindow } from './appWindow';
 import { Setting } from '@src/types';
 import { scrapPeriodically, removeOldPostsPeriodically } from '@main/scrap';
 import { loadSetting } from '@main/window/utilIpc';
 
-export const setting: Setting = { pollingInterval: 5, retention: 3, sites: [] };
+export const setting: Setting = { theme: 'system', pollingInterval: 5, retention: 3, sites: [] };
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require('electron-squirrel-startup')) {
@@ -19,7 +19,10 @@ if (require('electron-squirrel-startup')) {
 app.on('ready', async () => {
   await createAppWindow();
 
-  const { pollingInterval, retention, sites } = await loadSetting();
+  const { theme, pollingInterval, retention, sites } = await loadSetting();
+  setting.theme = theme;
+  nativeTheme.themeSource = theme;
+
   setting.pollingInterval = pollingInterval;
   setting.retention = retention;
   setting.sites = sites;

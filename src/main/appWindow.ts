@@ -56,7 +56,7 @@ export async function createAppWindow(): Promise<BrowserWindow> {
       const isCtrlMatch = (shortcut.ctrl && input.control) || (!shortcut.ctrl && !input.control);
       const isAltMatch = (shortcut.alt && input.alt) || (!shortcut.alt && !input.alt);
       const isShiftMatch = (shortcut.shift && input.shift) || (!shortcut.shift && !input.shift);
-      const isKeyMatch = shortcut.key === input.key || shortcut.key === input.code;
+      const isKeyMatch = shortcut.key.toLowerCase() === input.key.toLowerCase() || shortcut.key.toLowerCase() === input.code.toLowerCase();
       return isCtrlMatch && isAltMatch && isShiftMatch && isKeyMatch;
     };
     const isShortcut = menus.some(menu => matched(menu.shortcut as Shortcut));

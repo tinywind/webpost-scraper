@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { load } from 'cheerio';
 import { Post as PostType, extractPosts, Selector, Site } from '@src/types';
 import util from '@main/window/utilContextApi';
 import AppModal from '@components/AppModal';
@@ -21,16 +22,33 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
     link: { selector: data.urlSelector?.selector || '', property: data.urlSelector?.property || '', regex: data.urlSelector?.regex || '' },
     date: { selector: data.createdAtSelector?.selector || '', property: data.createdAtSelector?.property || '', regex: data.createdAtSelector?.regex || '' },
   });
+  const [name, setName] = useState(data.name);
+  const [favicon, setFavicon] = useState(data.favicon);
+  const [url, setUrl] = useState(data.url);
+  const [html, setHtml] = useState(data.html);
   const [previewData, setPreviewData] = useState<Array<PostType>>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchPreview = async () => {
     try {
       setLoading(true);
-      const result = await util.fetchSiteData(data.url);
+      const result = await util.fetchSiteData(url);
+      setHtml(result.html);
+
+      const $ = load(result.html);
+      let favicon = $('link[rel="icon"]').attr('href') || $('link[rel="shortcut icon"]').attr('href');
+      if (favicon) {
+        if (favicon.startsWith('//')) favicon = `${url.startsWith('https') ? 'https' : 'http'}:${favicon}`;
+        else if (!favicon.startsWith('http')) favicon = `${new URL(url).origin}/${favicon}`;
+      }
+
+      setFavicon(favicon);
       setPreviewData(
         extractPosts(result.html, {
           ...data,
+          name,
+          favicon,
+          url,
           articleSelector: selectors.article.selector,
           titleSelector: selectors.title,
           urlSelector: selectors.link,
@@ -45,6 +63,9 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
   const apply = () => {
     addSite({
       ...data,
+      name,
+      favicon,
+      url,
       articleSelector: selectors.article.selector,
       titleSelector: selectors.title,
       urlSelector: selectors.link,
@@ -72,32 +93,27 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
 
   return (
     <AppModal title={'Site'} closeModal={closeModal} apply={apply}>
-      <label htmlFor='title' className='block text-sm font-medium flex-1 truncate' title={data.name}>
+      <label htmlFor='title' className='block text-sm font-medium flex-1 truncate' title={name}>
         Title
       </label>
-      <div className='mt-1 mb-4 p-1 border rounded text-sm flex items-center'>
-        {data.favicon && <img src={data.favicon} alt='favicon' className='w-4 h-4 mr-2' />}
-        <span className='truncate' title={data.name}>
-          {data.name}
-        </span>
+      <div className='mt-1 mb-4 px-1 border rounded flex items-center w-full input-bgcolor'>
+        {favicon && <img src={favicon} alt='favicon' className='w-4 h-4 mr-2' />}
+        <input className='p-1 border-none text-sm w-full' value={name} onChange={e => setName(e.target.value)} />
       </div>
-      <label htmlFor='url' className='block text-sm font-medium flex-1 truncate' title={data.url}>
+
+      <label htmlFor='url' className='block text-sm font-medium flex-1 truncate' title={url}>
         URL
       </label>
-      <div className='mt-1 mb-4 p-1 border rounded text-sm flex items-center'>
-        <span className='truncate' title={data.url}>
-          {data.url}
-        </span>
+      <div className='flex gap-1 border-t border-gray-300 mt-4 mb-4 pt-4'>
+        <input className='flex-1 p-1 border rounded text-sm' value={url} onChange={e => setUrl(e.target.value)} />
+        <button disabled={loading} onClick={fetchPreview} className='button icon'>
+          {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faEye} />}
+        </button>
       </div>
       <label htmlFor='html' className='block text-sm font-medium'>
         HTML Content
       </label>
-      <textarea
-        className='mt-1 mb-4 text-xs block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-        rows={10}
-        readOnly
-        value={data.html}
-      />
+      <textarea className='mt-1 mb-4 text-xs block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500' rows={10} defaultValue={html} />
       <hr />
       <div className='mt-4'>
         {InputFields('article', ['selector'])}
@@ -105,12 +121,8 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
         {InputFields('link', ['selector', 'property', 'regex'])}
         {InputFields('date', ['selector', 'property', 'regex'])}
       </div>
-      <div className='text-center'>
-        <button disabled={loading} onClick={fetchPreview} className='w-full button icon'>
-          {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faEye} />}
-        </button>
-      </div>
-      <div className='mt-4'>
+
+      <div className='mt-4 border-t pt-4'>
         {previewData.map((item, index) => (
           <Post key={index} post={item} />
         ))}

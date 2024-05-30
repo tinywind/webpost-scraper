@@ -1,7 +1,10 @@
 import { load } from 'cheerio';
 import moment from 'moment';
 
+export type ThemeType = 'light' | 'dark' | 'system';
+
 export type Setting = {
+  theme: ThemeType;
   pollingInterval: number;
   retention: number;
   sites: Site[];

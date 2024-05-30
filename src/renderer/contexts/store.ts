@@ -2,13 +2,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
 import { thunk } from 'redux-thunk';
-import themeReducer from './themeSlice';
 import settingReducer from './settingSlice';
 
 const logger = createLogger();
 
 const rootReducer = combineReducers({
-  theme: themeReducer,
   setting: settingReducer,
 });
 
