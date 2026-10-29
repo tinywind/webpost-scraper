@@ -1,0 +1,9 @@
+nodeLinker: hoisted
+
+overrides:
+  "sockjs>uuid": 11.1.1
+
+allowBuilds:
+  electron: true
+  electron-winstaller: true
+  core-js-pure: false

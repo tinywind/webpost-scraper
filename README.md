@@ -14,8 +14,8 @@ To get started with Webpost Scraper, follow these steps:
 
 ### Prerequisites
 
-- Node.js
-- pnpm (Package manager)
+- Node.js 22.13 or later (Node.js 24 is used for verification)
+- pnpm 12.15.0, as pinned in `package.json`
 
 ### Installation
 
@@ -24,6 +24,10 @@ Install the dependencies using pnpm:
 ```bash
 pnpm install
 ```
+
+The workspace config uses the hoisted dependency layout required by Electron Forge. It also pins the development server's SockJS UUID dependency to the patched 11.1.1 release. The application retains React 18; Forge's CLI has a separate React 19 dependency and reports an optional `@types/react` peer mismatch under pnpm.
+
+Run `pnpm test` for the post extraction regressions, `pnpm lint` for the existing lint rules, and `pnpm package` to build the application without publishing. Linux packaging and an isolated Linux runtime are verified; Windows installers still require Windows validation.
 
 ### Running the Application
 
