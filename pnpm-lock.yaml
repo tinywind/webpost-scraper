@@ -236,8 +236,8 @@ importers:
         specifier: ^5.1.2
         version: 5.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sweetalert2@11.26.25)
       uuid:
-        specifier: ^11.1.1
-        version: 11.1.1
+        specifier: ^14.0.3
+        version: 14.0.3
     devDependencies:
       '@electron-forge/cli':
         specifier: 8.0.1
@@ -4009,6 +4009,10 @@ packages:
 
   uuid@11.1.1:
     resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
+    hasBin: true
+
+  uuid@14.0.3:
+    resolution: {integrity: sha512-Sc5u1VVln93y1Xnz4R+CunOZc7R9LUcTmhj7Rc7Eg3HVcf7rVn2FOoa812fe0W8p3jD7xeoGSYbfqCGGH2B6xw==}
     hasBin: true
 
   vary@1.1.2:
@@ -8361,6 +8365,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@11.1.1: {}
+
+  uuid@14.0.3: {}
 
   vary@1.1.2: {}
 
