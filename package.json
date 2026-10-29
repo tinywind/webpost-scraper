@@ -50,7 +50,7 @@
     "@types/uuid": "^9.0.8",
     "@types/webpack-env": "1.18.8",
     "@typescript-eslint/eslint-plugin": "7.10.0",
-    "@typescript-eslint/parser": "7.10.0",
+    "@typescript-eslint/parser": "7.18.0",
     "@vercel/webpack-asset-relocator-loader": "1.11.0",
     "autoprefixer": "^10.6.2",
     "classnames": "2.5.1",
