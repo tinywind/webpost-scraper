@@ -65,7 +65,7 @@
     "postcss": "^8.5.32",
     "postcss-import": "^16.2.0",
     "postcss-loader": "^8.2.1",
-    "postcss-nested": "^6.2.0",
+    "postcss-nested": "^9.0.1",
     "postcss-nesting": "^12.1.5",
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",

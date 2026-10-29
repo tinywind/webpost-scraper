@@ -339,8 +339,8 @@ importers:
         specifier: ^8.2.1
         version: 8.2.1(postcss@8.5.32)(typescript@5.4.5)(webpack@5.112.2)
       postcss-nested:
-        specifier: ^6.2.0
-        version: 6.2.0(postcss@8.5.32)
+        specifier: ^9.0.1
+        version: 9.0.1(postcss@8.5.32)
       postcss-nesting:
         specifier: ^12.1.5
         version: 12.1.5(postcss@8.5.32)
@@ -3164,6 +3164,12 @@ packages:
   postcss-nested@6.2.0:
     resolution: {integrity: sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==}
     engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.2.14
+
+  postcss-nested@9.0.1:
+    resolution: {integrity: sha512-FfeEbUMZ9nhld7AUMA32mGKstuXpQoDNj60v722j6+vH06H2kfuGhjmYdxDlkslx8H9+GrR7/cvlfS1zsuBscw==}
+    engines: {node: ^22.0.0 || ^24.0.0 || >= 26.0.0}
     peerDependencies:
       postcss: ^8.2.14
 
@@ -7474,6 +7480,11 @@ snapshots:
     dependencies:
       postcss: 8.5.32
       postcss-selector-parser: 6.1.5
+
+  postcss-nested@9.0.1(postcss@8.5.32):
+    dependencies:
+      postcss: 8.5.32
+      postcss-selector-parser: 7.1.7
 
   postcss-nesting@12.1.5(postcss@8.5.32):
     dependencies:
