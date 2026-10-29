@@ -19,7 +19,12 @@ jobs:
         with:
           node-version: 24
       - name: Install the pinned package manager
-        run: npm install --global pnpm@12.15.0 --ignore-scripts
+        shell: pwsh
+        run: |
+          npm install --global pnpm@12.15.0
+          if ($LASTEXITCODE -ne 0) { throw "Package manager installation failed" }
+          $version = pnpm --version
+          if ($LASTEXITCODE -ne 0 -or $version -ne "12.15.0") { throw "Pinned package manager did not start" }
       - name: Prepare an isolated source tree
         shell: pwsh
         run: |
