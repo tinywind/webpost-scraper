@@ -1,0 +1,52 @@
+name: Windows Package Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Install the pinned package manager
+        run: npm install --global pnpm@12.15.0 --ignore-scripts
+      - name: Prepare an isolated source tree
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force .tmp/windows-package | Out-Null
+          git archive --format=tar HEAD --output=.tmp/windows-source.tar
+          if ($LASTEXITCODE -ne 0) { throw "Source archive failed" }
+          tar -xf .tmp/windows-source.tar -C .tmp/windows-package
+          if ($LASTEXITCODE -ne 0) { throw "Source extraction failed" }
+      - name: Install locked dependencies
+        working-directory: .tmp/windows-package
+        run: pnpm install --frozen-lockfile
+      - name: Check types
+        working-directory: .tmp/windows-package
+        run: pnpm exec tsc --noEmit
+      - name: Lint
+        working-directory: .tmp/windows-package
+        run: pnpm lint
+      - name: Verify post extraction
+        working-directory: .tmp/windows-package
+        run: pnpm test
+      - name: Build the Windows installer
+        working-directory: .tmp/windows-package
+        run: pnpm make --platform=win32 --arch=x64
+      - name: Verify the installer output
+        shell: pwsh
+        run: |
+          $installers = @(Get-ChildItem .tmp/windows-package/out/make -Recurse -Filter *.exe)
+          if ($installers.Count -eq 0) { throw "Windows installer was not created" }
+          if (@($installers | Where-Object Length -eq 0).Count -ne 0) { throw "Windows installer is empty" }
+          $installers | Select-Object Name, Length
