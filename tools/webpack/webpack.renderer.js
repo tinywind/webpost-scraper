@@ -3,7 +3,8 @@ const plugins = require('./webpack.plugins');
 
 module.exports = {
   module: {
-    rules,
+    // The isolated renderer cannot execute the Node asset relocation runtime.
+    rules: rules.filter(rule => rule.use?.loader !== '@vercel/webpack-asset-relocator-loader'),
   },
   plugins: plugins,
   resolve: {
