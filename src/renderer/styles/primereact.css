@@ -1,3 +1,14 @@
-.p-contextmenu .p-menuitem > .p-menuitem-content .p-menuitem-link {
-  @apply px-4 py-2 text-sm;
+.context-menu {
+  @apply rounded border shadow-md;
+  background: var(--app-bgcolor);
+  border-color: var(--app-border-color);
+  color: var(--app-color);
+}
+
+.context-menu-item {
+  @apply flex items-center gap-2 px-4 py-2 text-sm cursor-pointer;
+
+  &[data-focused] {
+    background: var(--button-hover-bgcolor);
+  }
 }

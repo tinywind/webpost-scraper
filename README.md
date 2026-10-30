@@ -15,7 +15,7 @@ To get started with Webpost Scraper, follow these steps:
 ### Prerequisites
 
 - Node.js 22.13 or later (Node.js 24 is used for verification)
-- pnpm 12.15.0, as pinned in `package.json`
+- pnpm 12.16.1, as pinned in `package.json`
 
 ### Installation
 
@@ -25,9 +25,15 @@ Install the dependencies using pnpm:
 pnpm install
 ```
 
-The workspace config uses the hoisted dependency layout required by Electron Forge. It also pins the development server's SockJS UUID dependency to the patched 11.1.1 release. The application retains React 18; Forge's CLI has a separate React 19 dependency and reports an optional `@types/react` peer mismatch under pnpm.
+The workspace uses the hoisted dependency layout required by Electron Forge and pins SockJS's CommonJS UUID dependency to the patched 11.1.1 release. The application uses React 19, PrimeReact 11 primitives and Tailwind CSS 4.
 
-Run `pnpm test` for the post extraction regressions, `pnpm lint` for the existing lint rules, and `pnpm package` to build the application without publishing. Linux packaging and an isolated Linux runtime are verified; Windows installers still require Windows validation.
+Type checking uses TypeScript 7.0.2. The `typescript` alias points to Microsoft's latest `@typescript/typescript6` compatibility package because typescript-eslint and ts-loader require the JavaScript compiler API removed in TypeScript 7. The `@typescript/native` alias supplies the TypeScript 7 `tsc` command, following [Microsoft's side-by-side setup](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-60). The explicit `strict: false` setting preserves the previous compiler defaults, with `noImplicitAny` enabled.
+
+ESLint 10 uses flat configuration. `@eslint/compat` adapts the React and import plugins, whose declared ESLint peer ranges still stop at version 9.
+
+Run `pnpm typecheck`, `pnpm lint` and `pnpm test` before `pnpm package`. Run `node test/runtime-smoke.cjs` against the packaged executable; on Linux use `xvfb-run -a node test/runtime-smoke.cjs`. An optional first argument selects an executable outside `out/`. The smoke test uses a loopback HTTP fixture and isolated databases/profile under `.tmp/`, checks collection, menus, search, themes, error messages and persistence, and leaves diagnostics there. It does not use existing application data.
+
+The Windows Package Check workflow builds the x64 Squirrel installer, runs the packaged application smoke test and uploads the tested installer. Desktop notification delivery and the interactive installer wizard still require manual verification.
 
 ### Running the Application
 
@@ -64,6 +70,8 @@ For Windows x64 environments, you can also run the program using the setup file 
 ## License
 
 This project is licensed under the MIT License.
+
+PrimeReact 11 dependencies use the [PrimeUI License](https://primeui.dev/licenses). Their license terms are separate from this project's MIT license.
 
 ## Acknowledgements
 

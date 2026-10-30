@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     "allowJs": true,
-    "target": "ES6",
+    "target": "ES2022",
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "strict": false,
     "noImplicitAny": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "outDir": "dist",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "paths": {
-      "*": ["node_modules/*"],
       "@assets/*": ["./assets/*"],
       "@pages/*": ["./src/renderer/pages/*"],
       "@components/*": ["./src/renderer/components/*"],
