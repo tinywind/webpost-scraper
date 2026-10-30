@@ -17,9 +17,13 @@ let socket;
 let sequence = 0;
 const pending = new Map();
 const exceptions = [];
+let servePosts = true;
+let deferredResponse;
 const fixture = http.createServer((request, response) => {
   if (request.url === '/offline') return response.destroy();
+  if (request.url === '/delayed/') { deferredResponse = response; return; }
   if (request.url !== '/news/') response.writeHead(404);
+  if (!servePosts) return response.end('<title>Smoke fixture</title>');
   response.end(`<title>Smoke fixture</title><article><a href="first">First smoke post</a><time>${new Date().toISOString()}</time></article><article><a href="/second">Second smoke post</a></article>`);
 });
 
@@ -184,6 +188,18 @@ async function main() {
     await evaluate("document.querySelector('button svg[data-icon=gear]').closest('button').click()");
     await waitFor(() => evaluate("document.body.textContent.includes('Scraper Settings')"), 'settings screen');
   });
+  await check('loading and site modal overlays retain transparency', async () => {
+    await evaluate(`(() => { const input = document.querySelector('input[placeholder="Enter website URL to crawl"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(base + '/delayed/')}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await evaluate("document.querySelector('input[placeholder=\"Enter website URL to crawl\"]').parentElement.querySelector('button').click()");
+    await waitFor(() => evaluate("!!document.querySelector('.fixed.z-50')"), 'loading overlay');
+    assert.match(await evaluate("getComputedStyle(document.querySelector('.fixed.z-50')).backgroundColor"), /[,/]\s*0\.5\)$/);
+    await waitFor(() => !!deferredResponse, 'deferred fixture request');
+    deferredResponse.end('<title>Deferred smoke fixture</title>');
+    await waitFor(() => evaluate("!!document.querySelector('.ReactModalPortal > div')"), 'site editor');
+    assert.match(await evaluate("getComputedStyle(document.querySelector('.ReactModalPortal > div')).backgroundColor"), /[,/]\s*0\.5\)$/);
+    await evaluate("document.querySelector('[role=dialog] button').click()");
+    await waitFor(() => evaluate("!document.querySelector('[role=dialog]')"), 'site editor dismissal');
+  });
   await check('settings report failed network requests', async () => {
     await evaluate(`(() => { const input = document.querySelector('input[placeholder="Enter website URL to crawl"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(base + '/offline')}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
     await evaluate("document.querySelector('input[placeholder=\"Enter website URL to crawl\"]').parentElement.querySelector('button').click()");
@@ -191,6 +207,7 @@ async function main() {
     await evaluate("document.querySelector('.swal2-confirm').click()");
   });
   await check('settings and post changes survive restart', async () => {
+    servePosts = false;
     await evaluate(`window.electronApi.save({ theme: 'dark', pollingInterval: 1, retention: 7, sites: [${JSON.stringify(site)}] })`);
     await evaluate(`window.electronApi.deletePost(${JSON.stringify(base + '/second')})`);
     await stop();

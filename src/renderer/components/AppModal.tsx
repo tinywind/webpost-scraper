@@ -12,7 +12,7 @@ export default function AppModal({ children, title, closeModal, apply }: { child
       ariaHideApp={false}
       onRequestClose={closeModal}
       className='modal flex flex-col relative bg-white w-4/5 h-4/5 mx-auto my-12 rounded-lg shadow-lg'
-      overlayClassName='absolute top-0 bottom-0 left-0 right-0 inset-0 bg-black bg-opacity-50'>
+      overlayClassName='absolute top-0 bottom-0 left-0 right-0 inset-0 bg-black/50'>
       <div className='flex justify-between items-center mb-4 p-4'>
         <h2 className='text-lg font-bold'>{title}</h2>
         <button onClick={closeModal} className='button icon-only'>

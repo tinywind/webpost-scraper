@@ -31,7 +31,7 @@ Type checking uses TypeScript 7.0.2. The `typescript` alias points to Microsoft'
 
 ESLint 10 uses flat configuration. `@eslint/compat` adapts the React and import plugins, whose declared ESLint peer ranges still stop at version 9.
 
-Run `pnpm typecheck`, `pnpm lint` and `pnpm test` before `pnpm package`. Run `node test/runtime-smoke.cjs` against the packaged executable; on Linux use `xvfb-run -a node test/runtime-smoke.cjs`. An optional first argument selects an executable outside `out/`. The smoke test uses a loopback HTTP fixture and isolated databases/profile under `.tmp/`, checks collection, menus, search, themes, error messages and persistence, and leaves diagnostics there. It does not use existing application data.
+Run `pnpm typecheck`, `pnpm lint` and `pnpm test` before `pnpm package`. Run `node test/runtime-smoke.cjs` against the packaged executable; on Linux use `xvfb-run -a node test/runtime-smoke.cjs`. An optional first argument selects an executable outside `out/`. The smoke test uses a loopback HTTP fixture and isolated databases/profile under `.tmp/`, checks collection, menus, search, themes, loading/modal transparency, error messages and persistence, and leaves diagnostics there. It does not use existing application data.
 
 The Windows Package Check workflow builds the x64 Squirrel installer, runs the packaged application smoke test and uploads the tested installer. Desktop notification delivery and the interactive installer wizard still require manual verification.
 
