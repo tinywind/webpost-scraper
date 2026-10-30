@@ -55,8 +55,8 @@ export default function Settings() {
       } else {
         error(`Failed to fetch site data: ${result.statusText}`);
       }
-    } catch (error) {
-      error('Failed to load the page: ' + error.message);
+    } catch (cause) {
+      error('Failed to load the page: ' + cause.message);
     } finally {
       setLoading(false);
     }

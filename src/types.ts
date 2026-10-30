@@ -71,11 +71,11 @@ export const extractPosts = (html: string, site: Site): Post[] => {
       const titleProp = titleEl.prop(site.titleSelector.property || 'textContent') || '';
       const urlProp = urlEl.prop(site.urlSelector.property || 'href') || '';
       const dateProp = dateEl ? dateEl.prop(site.createdAtSelector.property || 'textContent') || '' : '';
-      let date = new Date();
+      let date: Date;
       try {
         date = moment(dateProp?.match(new RegExp(site.createdAtSelector.regex))?.[0] || dateProp).toDate();
       } catch (ignored) {
-        ('');
+        date = new Date();
       }
       const title = titleProp?.match(new RegExp(site.titleSelector.regex))?.[0] || titleProp;
       const url = urlProp?.match(new RegExp(site.urlSelector.regex))?.[0] || urlProp;
