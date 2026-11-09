@@ -59,6 +59,30 @@ async function evaluate(expression) {
   return result.result.value;
 }
 
+// Send values as Chrome DevTools Protocol arguments, never interpolate them into JavaScript source.
+async function callRenderer(functionDeclaration, ...values) {
+  const context = await send('Runtime.evaluate', { expression: 'window' });
+  if (context.exceptionDetails || !context.result?.objectId) {
+    throw new Error('Renderer context is unavailable');
+  }
+  const result = await send('Runtime.callFunctionOn', {
+    objectId: context.result.objectId,
+    functionDeclaration,
+    arguments: values.map(value => ({ value })),
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  if (result.exceptionDetails) throw new Error(JSON.stringify(result.exceptionDetails));
+  return result.result.value;
+}
+
+async function setWebsiteUrl(url) {
+  await callRenderer(
+    'function (url) { const input = document.querySelector(\'input[placeholder="Enter website URL to crawl"]\'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(input, url); input.dispatchEvent(new Event("input", { bubbles: true })); }',
+    url,
+  );
+}
+
 async function start() {
   const reservation = net.createServer();
   reservation.listen(0, '127.0.0.1');
@@ -112,7 +136,7 @@ async function check(name, action) {
 }
 
 async function clickButton(prefix) {
-  await evaluate(`Array.from(document.querySelectorAll('button')).find(button => button.textContent.startsWith(${JSON.stringify(prefix)})).click()`);
+  await callRenderer('function (prefix) { return Array.from(document.querySelectorAll("button")).find(button => button.textContent.startsWith(prefix)).click(); }', prefix);
 }
 
 async function menu() {
@@ -121,7 +145,10 @@ async function menu() {
 }
 
 async function selectMenu(label) {
-  const point = await evaluate(`(() => { const item = Array.from(document.querySelectorAll('[role=menuitem]')).find(item => item.textContent.trim() === ${JSON.stringify(label)}); const rect = item.getBoundingClientRect(); return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }; })()`);
+  const point = await callRenderer(
+    'function (label) { const item = Array.from(document.querySelectorAll("[role=menuitem]")).find(item => item.textContent.trim() === label); const rect = item.getBoundingClientRect(); return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }; }',
+    label,
+  );
   await send('Input.dispatchMouseEvent', { type: 'mouseMoved', ...point });
   await send('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...point });
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...point });
@@ -141,8 +168,8 @@ async function main() {
     assert.ok(await evaluate("document.querySelector('[data-scope=contextmenu][data-part=root]').getBoundingClientRect().height > 400"), 'Context menu root preserves the list height');
   });
   await check('network success, HTTP failure and invalid URL', async () => {
-    assert.equal(await evaluate(`window.electronApi.fetchSiteData(${JSON.stringify(site.url)}).then(result => result.ok && result.status === 200 && result.html.includes('First smoke post'))`), true);
-    assert.equal(await evaluate(`window.electronApi.fetchSiteData(${JSON.stringify(base + '/missing')}).then(result => result.status)`), 404);
+    assert.equal(await callRenderer('function (url) { return window.electronApi.fetchSiteData(url).then(result => result.ok && result.status === 200 && result.html.includes("First smoke post")); }', site.url), true);
+    assert.equal(await callRenderer('function (url) { return window.electronApi.fetchSiteData(url).then(result => result.status); }', base + '/missing'), 404);
     assert.match(await evaluate("window.electronApi.fetchSiteData('').then(() => '', error => error.message)"), /Please enter a URL/);
   });
   await check('periodic scraping and database persistence', async () => {
@@ -189,7 +216,7 @@ async function main() {
     await waitFor(() => evaluate("document.body.textContent.includes('Scraper Settings')"), 'settings screen');
   });
   await check('loading and site modal overlays retain transparency', async () => {
-    await evaluate(`(() => { const input = document.querySelector('input[placeholder="Enter website URL to crawl"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(base + '/delayed/')}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await setWebsiteUrl(base + '/delayed/');
     await evaluate("document.querySelector('input[placeholder=\"Enter website URL to crawl\"]').parentElement.querySelector('button').click()");
     await waitFor(() => evaluate("!!document.querySelector('.fixed.z-50')"), 'loading overlay');
     assert.match(await evaluate("getComputedStyle(document.querySelector('.fixed.z-50')).backgroundColor"), /[,/]\s*0\.5\)$/);
@@ -201,15 +228,15 @@ async function main() {
     await waitFor(() => evaluate("!document.querySelector('[role=dialog]')"), 'site editor dismissal');
   });
   await check('settings report failed network requests', async () => {
-    await evaluate(`(() => { const input = document.querySelector('input[placeholder="Enter website URL to crawl"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(base + '/offline')}); input.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await setWebsiteUrl(base + '/offline');
     await evaluate("document.querySelector('input[placeholder=\"Enter website URL to crawl\"]').parentElement.querySelector('button').click()");
     await waitFor(() => evaluate("document.body.textContent.includes('Failed to load the page:')"), 'network error message', 10000);
     await evaluate("document.querySelector('.swal2-confirm').click()");
   });
   await check('settings and post changes survive restart', async () => {
     servePosts = false;
-    await evaluate(`window.electronApi.save({ theme: 'dark', pollingInterval: 1, retention: 7, sites: [${JSON.stringify(site)}] })`);
-    await evaluate(`window.electronApi.deletePost(${JSON.stringify(base + '/second')})`);
+    await callRenderer('function (site) { return window.electronApi.save({ theme: "dark", pollingInterval: 1, retention: 7, sites: [site] }); }', site);
+    await callRenderer('function (url) { return window.electronApi.deletePost(url); }', base + '/second');
     await stop();
     await start();
     const setting = await evaluate('window.electronApi.load()');
@@ -224,7 +251,7 @@ async function main() {
   });
   assert.deepEqual(exceptions, [], 'Renderer exceptions');
   await stop();
-  fs.writeFileSync(path.join(work, 'receipt.json'), JSON.stringify({ executable, checks, exceptions }, null, 2));
+  fs.writeFileSync(path.join(work, 'receipt.json'), JSON.stringify({ checks, passed: checks.length }, null, 2));
   console.log(JSON.stringify({ work, passed: checks.length }));
 }
 
@@ -232,11 +259,11 @@ main().catch(async error => {
   console.error(error);
   if (socket?.readyState === WebSocket.OPEN) {
     try {
-      const diagnostics = await evaluate(`(async () => ({ text: document.body.innerText, focus: { tag: document.activeElement.tagName, role: document.activeElement.getAttribute('role'), documentFocused: document.hasFocus() }, posts: await window.electronApi.getPosts(), menus: Array.from(document.querySelectorAll('[role=menuitem]')).map(item => ({ text: item.innerText, rect: item.getBoundingClientRect().toJSON(), style: getComputedStyle(item).display })) }))()`);
-      fs.writeFileSync(path.join(work, 'renderer.json'), JSON.stringify(diagnostics, null, 2));
+      const diagnostics = await evaluate('({ focusedElement: document.activeElement?.tagName, focusedRole: document.activeElement?.getAttribute("role"), menuCount: document.querySelectorAll("[role=menuitem]").length })');
+      console.error('Renderer diagnostic summary:', JSON.stringify(diagnostics));
     } catch (diagnosticError) { console.error(diagnosticError.message); }
   }
-  fs.writeFileSync(path.join(work, 'failure.json'), JSON.stringify({ error: error.stack, checks, exceptions }, null, 2));
+  fs.writeFileSync(path.join(work, 'failure.json'), JSON.stringify({ checks, passed: checks.length, failed: true }, null, 2));
   process.exitCode = 1;
 }).finally(() => {
   socket?.close();
