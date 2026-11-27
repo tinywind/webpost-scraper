@@ -1,65 +1,38 @@
-import { app, BrowserWindow, nativeTheme } from 'electron';
+import { app, dialog, nativeTheme } from 'electron';
+import squirrelStartup from 'electron-squirrel-startup';
 import { createAppWindow } from './appWindow';
-import { Setting } from '@src/types';
 import { scrapPeriodically, removeOldPostsPeriodically } from '@main/scrap';
-import { loadSetting } from '@main/window/utilIpc';
+import { setting, registerUtilIpc } from '@main/window/utilIpc';
+import { registerNavigatorIpc } from '@main/window/navigatorIpc';
+import attributeRepository from './repositories/AttributeRepository';
+import { hasUnmigratedDatabase, prepareDatabaseDirectory } from './repositories/databasePath';
 
-export const setting: Setting = { theme: 'system', pollingInterval: 5, retention: 3, sites: [] };
-
-/** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
-if (require('electron-squirrel-startup')) {
+if (squirrelStartup || !app.requestSingleInstanceLock()) {
   app.quit();
-}
-
-/**
- * This method will be called when Electron has finished
- * initialization and is ready to create browser windows.
- * Some APIs can only be used after this event occurs.
- */
-app.on('ready', async () => {
-  await createAppWindow();
-
-  const { theme, pollingInterval, retention, sites } = await loadSetting();
-  setting.theme = theme;
-  nativeTheme.themeSource = theme;
-
-  setting.pollingInterval = pollingInterval;
-  setting.retention = retention;
-  setting.sites = sites;
-  scrapPeriodically();
-  removeOldPostsPeriodically();
-});
-
-/**
- * Emitted when the application is activated. Various actions can
- * trigger this event, such as launching the application for the first time,
- * attempting to re-launch the application when it's already running,
- * or clicking on the application's dock or taskbar icon.
- */
-app.on('activate', () => {
-  /**
-   * On OS X it's common to re-create a window in the app when the
-   * dock icon is clicked and there are no other windows open.
-   */
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createAppWindow();
-  }
-});
-
-/**
- * Emitted when all windows have been closed.
- */
-app.on('window-all-closed', () => {
-  /**
-   * On OS X it is common for applications and their menu bar
-   * to stay active until the user quits explicitly with Cmd + Q
-   */
-  if (process.platform !== 'darwin') {
+} else {
+  app.whenReady().then(async () => {
+    const userData = app.getPath('userData');
+    let legacy = app.commandLine.hasSwitch('import-legacy-db') ? app.commandLine.getSwitchValue('import-legacy-db') : undefined;
+    if (legacy === undefined && hasUnmigratedDatabase(userData, process.cwd())) {
+      const { response } = await dialog.showMessageBox({
+        type: 'question', message: 'Copy the existing Webpost Scraper data into this profile?',
+        detail: `Source: ${process.cwd()}\nProfile: ${userData}`,
+        buttons: ['Copy existing data', 'Start empty', 'Quit'], defaultId: 0, cancelId: 2,
+      });
+      if (response === 2) { app.quit(); return; }
+      if (response === 0) legacy = process.cwd();
+    }
+    prepareDatabaseDirectory(userData, legacy);
+    Object.assign(setting, await attributeRepository.get());
+    nativeTheme.themeSource = setting.theme;
+    registerUtilIpc();
+    registerNavigatorIpc();
+    await createAppWindow();
+    scrapPeriodically();
+    removeOldPostsPeriodically();
+  }).catch(cause => {
+    dialog.showErrorBox('Could not start Webpost Scraper', String(cause));
     app.quit();
-  }
-});
-
-/**
- * In this file you can include the rest of your app's specific main process code.
- * You can also put them in separate files and import them here.
- */
+  });
+}
+app.on('window-all-closed', () => app.quit());

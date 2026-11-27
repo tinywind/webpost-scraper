@@ -14,7 +14,7 @@ const navigatorContext = {
     if (value === 'dark') ipcRenderer.invoke('dark-mode:dark');
     if (value === 'light') ipcRenderer.invoke('dark-mode:light');
   },
-  setNavigateAction: (callback: (path: string) => void) => (navigateAction = callback),
+  setNavigateAction: (callback: (path: string) => void) => { navigateAction = callback; },
   navigate: (path: string) => navigateAction(path),
 };
 

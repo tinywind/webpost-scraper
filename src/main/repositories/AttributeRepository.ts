@@ -1,58 +1,32 @@
 import BaseService from './BaseRepository';
-import { ThemeType } from '@src/types';
+import siteRepository from './SiteRepository';
+import type { Setting } from '@src/types';
 
-class _AttributeRepository extends BaseService<string, { key: string; value: any }> {
+type Attribute =
+  | { key: 'settings'; value: Setting }
+  | { key: 'theme'; value: Setting['theme'] }
+  | { key: 'pollingInterval' | 'retention'; value: number };
+
+class AttributeRepository extends BaseService<Attribute> {
   constructor() {
-    super('attribute', 'key');
+    super('attribute');
+  }
+
+  async get(): Promise<Setting> {
+    const attributes = await this.findAll();
+    const snapshot = attributes.find(a => a.key === 'settings');
+    if (snapshot) return snapshot.value;
+    const setting: Setting = { theme: 'system', pollingInterval: 5, retention: 3, sites: await siteRepository.findAll() };
+    for (const attribute of attributes) {
+      if (attribute.key === 'theme') setting.theme = attribute.value;
+      if (attribute.key === 'retention' || attribute.key === 'pollingInterval') setting[attribute.key] = attribute.value;
+    }
+    return setting;
+  }
+
+  async save(value: Setting) {
+    await this.database.updateAsync({ _id: 'settings' }, { key: 'settings', value, _id: 'settings' }, { upsert: true });
   }
 }
 
-class AttributeRepository {
-  private attributeRepository = new _AttributeRepository();
-
-  async get(): Promise<{ theme: ThemeType; pollingInterval: number; retention: number }> {
-    const list = await this.attributeRepository.findAll();
-    return {
-      theme: list.find(a => a.key === 'theme')?.value || 'system',
-      pollingInterval: list.find(a => a.key === 'pollingInterval')?.value || 5,
-      retention: list.find(a => a.key === 'retention')?.value || 3,
-    };
-  }
-
-  async save(theme: ThemeType, pollingInterval: number, retention: number) {
-    await this.setTheme(theme);
-    await this.setPollingInterval(pollingInterval);
-    await this.setRetention(retention);
-  }
-
-  async setTheme(theme: ThemeType) {
-    const e = { key: 'theme', value: theme };
-    if (await this.attributeRepository.find('theme')) {
-      return await this.attributeRepository.update(e.key, e);
-    } else {
-      return await this.attributeRepository.insert(e);
-    }
-  }
-
-  async setPollingInterval(pollingInterval: number) {
-    const e = { key: 'pollingInterval', value: pollingInterval };
-    if (pollingInterval < 1) throw new Error('Polling interval must be greater than 0');
-    if (await this.attributeRepository.find('pollingInterval')) {
-      return await this.attributeRepository.update(e.key, e);
-    } else {
-      return await this.attributeRepository.insert(e);
-    }
-  }
-
-  async setRetention(retention: number) {
-    const e = { key: 'retention', value: retention };
-    if (await this.attributeRepository.find('retention')) {
-      return await this.attributeRepository.update(e.key, e);
-    } else {
-      return await this.attributeRepository.insert(e);
-    }
-  }
-}
-
-const attributeRepository = new AttributeRepository();
-export default attributeRepository;
+export default new AttributeRepository();

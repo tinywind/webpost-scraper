@@ -1,10 +1,20 @@
-import { BrowserWindow, ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
+import { getAppWindow } from '@main/appWindow';
+import { webUrl } from '@common/webUrl';
 
-export const registerNavigatorIpc = (mainWindow: BrowserWindow) => {
-  ipcMain.handle('window-minimize', () => mainWindow.minimize());
-  ipcMain.handle('window-maximize', () => mainWindow.maximize());
-  ipcMain.handle('window-toggle-maximize', () => (mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()));
-  ipcMain.handle('window-close', () => mainWindow.close());
-  ipcMain.handle('web-toggle-devtools', () => mainWindow.webContents.toggleDevTools());
-  ipcMain.handle('open-url', (e, url) => shell.openExternal(url));
+export const registerNavigatorIpc = () => {
+  ipcMain.handle('window-minimize', () => getAppWindow()?.minimize());
+  ipcMain.handle('window-maximize', () => getAppWindow()?.maximize());
+  ipcMain.handle('window-toggle-maximize', () => {
+    const window = getAppWindow();
+    if (window?.isMaximized()) window.unmaximize();
+    else window?.maximize();
+  });
+  ipcMain.handle('window-close', () => getAppWindow()?.close());
+  ipcMain.handle('web-toggle-devtools', () => getAppWindow()?.webContents.toggleDevTools());
+  ipcMain.handle('open-url', (_, value: unknown) => {
+    const url = webUrl(value);
+    if (!url) throw new Error('Expected an HTTP or HTTPS URL');
+    return shell.openExternal(url.href);
+  });
 };

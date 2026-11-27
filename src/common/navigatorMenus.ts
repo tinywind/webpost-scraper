@@ -44,7 +44,7 @@ const navigatorMenus: Menu[] = [
     items: [
       { name: 'Light', action: 'setTheme', value: 'light' },
       { name: 'Dark', action: 'setTheme', value: 'dark' },
-      { name: '__', action: null },
+      { name: '__' },
       { name: 'System', action: 'setTheme', value: 'system' },
     ],
   },

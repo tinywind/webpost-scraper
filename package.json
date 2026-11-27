@@ -11,7 +11,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint src/",
     "format": "prettier --write .",
-    "test": "node --test test/extract-posts.cjs",
+    "test": "node --test test/extract-posts.cjs test/main-process.cjs",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [

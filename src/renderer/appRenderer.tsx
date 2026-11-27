@@ -7,11 +7,13 @@ import { RouterProvider } from 'react-router-dom';
 import router from '@renderer/router';
 import navigator from '@main/window/navigatorContextApi';
 import util from '@main/window/utilContextApi';
-import navigatorMenus, { Shortcut } from '@renderer/navigatorMenus';
+import navigatorMenus, { Shortcut } from '@common/navigatorMenus';
 
 library.add(fas);
 
-createRoot(document.getElementById('app')).render(
+const root = document.getElementById('app');
+if (!root) throw new Error('Missing application root');
+createRoot(root).render(
   <WindowFrame title='Webpost Scraper' platform='windows'>
     <React.StrictMode>
       <RouterProvider router={router} />
@@ -19,21 +21,8 @@ createRoot(document.getElementById('app')).render(
   </WindowFrame>,
 );
 
-function setOnNavigateAction() {
-  setTimeout(() => {
-    if (!util) return setOnNavigateAction();
-    util.setOnNavigateAction(async (path: string) => await router.navigate(path));
-  }, 1000);
-}
-setOnNavigateAction();
-
-function setNavigateAction() {
-  setTimeout(() => {
-    if (!navigator) return setOnNavigateAction();
-    navigator.setNavigateAction(async (path: string) => await router.navigate(path));
-  }, 1000);
-}
-setNavigateAction();
+util.setOnNavigateAction(path => router.navigate(path));
+navigator.setNavigateAction(path => router.navigate(path));
 
 document.addEventListener('keyup', e => {
   const menus = navigatorMenus.flatMap(e => e.items).filter(e => e.shortcut && typeof e.shortcut !== 'string' && e.shortcut.key);

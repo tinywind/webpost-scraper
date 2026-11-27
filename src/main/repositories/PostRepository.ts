@@ -3,15 +3,19 @@ import BaseService from './BaseRepository';
 
 export type Type = Omit<Post, 'site'> & { site: string };
 
-class PostRepository extends BaseService<string, Type> {
+class PostRepository extends BaseService<Type> {
   constructor() {
-    super('post', 'url');
+    super('post');
   }
 
-  override async insert(entity: Type | Type[]): Promise<Array<Type & { _id: string }>> {
+  async insert(entity: Type | Type[]): Promise<Array<Type & { _id: string }>> {
     const entities = (Array.isArray(entity) ? entity : [entity]).map(e => ({ ...e, _id: e.url }));
     const existingUrls = new Set((await this.database.findAsync({ url: { $in: entities.map(e => e.url) } })).map(doc => doc.url));
-    const inserting = entities.filter(e => !existingUrls.has(e.url));
+    const inserting = entities.filter(e => {
+      if (existingUrls.has(e.url)) return false;
+      existingUrls.add(e.url);
+      return true;
+    });
     if (inserting.length === 0) return [];
     return await this.database.insertAsync(inserting);
   }

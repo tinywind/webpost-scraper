@@ -13,6 +13,32 @@ Download the `Setup.exe` asset from the repository's
 installer. Node.js and pnpm are needed for source development, not for this
 packaged application.
 
+## Keep existing data when upgrading
+
+The app stores its databases in the `scraper-data` directory under Electron's
+per-user application profile. Versions up to 0.2.1 stored the files in the
+directory from which the app was launched.
+
+1. Close the older app. Keep a backup of its `scraper-1__*.db` files and any
+   matching `.db~` recovery files.
+2. On the first launch, if the app finds these files in its working directory,
+   confirm the source path and choose **Copy existing data**. If the old files
+   are elsewhere, launch the new executable once with their absolute directory,
+   for example in PowerShell:
+
+   ```powershell
+   & ".\Webpost Scraper.exe" "--import-legacy-db=C:\My Scraper Data"
+   ```
+
+3. Check the sites under Settings and the posts in the All and Marked tabs.
+   Subsequent launches use the same profile from any working directory.
+
+Import copies the site, attribute and post databases together and keeps the
+original files. It refuses to overwrite an existing profile database directory.
+If you already started with an empty profile, close the app and move its
+`scraper-data` directory to a backup location before retrying. If both copies
+contain user changes, keep both backups for reconciliation.
+
 ## Add a website and collect posts
 
 1. Open `View > Settings` or press `Ctrl+2`.

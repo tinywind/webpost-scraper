@@ -1,21 +1,19 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { registerNavigatorIpc } from '@main/window/navigatorIpc';
-import { registerUtilIpc } from '@main/window/utilIpc';
-import navigatorMenus, { allowedDefaultShortcuts, Shortcut } from '@renderer/navigatorMenus';
+import navigatorMenus, { allowedDefaultShortcuts, Shortcut } from '@common/navigatorMenus';
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-let appWindow: BrowserWindow;
+let appWindow: BrowserWindow | undefined;
 
 /**
  * Create Application Window
  * @returns {BrowserWindow} Application Window Instance
  */
 export async function createAppWindow(): Promise<BrowserWindow> {
-  appWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     width: process.env.NODE_ENV === 'development' ? 1920 : 800,
     height: process.env.NODE_ENV === 'development' ? 1080 : 600,
     backgroundColor: '#202020',
@@ -23,7 +21,7 @@ export async function createAppWindow(): Promise<BrowserWindow> {
     autoHideMenuBar: true,
     frame: false,
     titleBarStyle: 'hidden',
-    icon: path.resolve('assets/images/appIcon.ico'),
+    icon: app.isPackaged ? path.join(process.resourcesPath, 'appIcon.ico') : path.join(app.getAppPath(), 'assets/images/appIcon.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -34,23 +32,19 @@ export async function createAppWindow(): Promise<BrowserWindow> {
     },
   });
 
-  appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
+  appWindow = window;
 
-  appWindow.on('ready-to-show', () => {
-    appWindow.show();
+  window.on('ready-to-show', () => {
+    window.show();
   });
 
-  registerNavigatorIpc(appWindow);
-  registerUtilIpc();
-
-  appWindow.on('close', () => {
-    appWindow = null;
-    app.quit();
+  window.on('closed', () => {
+    appWindow = undefined;
   });
 
-  if (process.env.NODE_ENV === 'development') appWindow.webContents.toggleDevTools();
+  if (process.env.NODE_ENV === 'development') window.webContents.toggleDevTools();
 
-  appWindow.webContents.on('before-input-event', (event, input) => {
+  window.webContents.on('before-input-event', (event, input) => {
     const menus = navigatorMenus.flatMap(e => e.items).filter(e => e.shortcut && typeof e.shortcut !== 'string' && e.shortcut.key);
     const matched = (shortcut: Shortcut) => {
       const isCtrlMatch = (shortcut.ctrl && input.control) || (!shortcut.ctrl && !input.control);
@@ -63,15 +57,16 @@ export async function createAppWindow(): Promise<BrowserWindow> {
     const isAllowedDefaultShortcut = allowedDefaultShortcuts.some(shortcut => matched(shortcut));
 
     const keysToBlock = [...Array.from({ length: 12 }, (_, i) => `F${i + 1}`)];
-    if (!isShortcut && !isAllowedDefaultShortcut && (input.control || input.alt || input.shift || keysToBlock.includes(input.key))) {
+    if (!isShortcut && !isAllowedDefaultShortcut && (input.control || input.alt || keysToBlock.includes(input.key))) {
       event.preventDefault();
       console.log(`Blocked key: ${input.key}`);
     }
   });
 
-  return appWindow;
+  await window.loadURL(APP_WINDOW_WEBPACK_ENTRY);
+  return window;
 }
 
-export function getAppWindow(): BrowserWindow {
+export function getAppWindow(): BrowserWindow | undefined {
   return appWindow;
 }

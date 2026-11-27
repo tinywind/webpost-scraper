@@ -4,6 +4,7 @@ const rootDir = process.cwd();
 module.exports = {
   packagerConfig: {
     asar: true,
+    extraResource: [path.join(rootDir, 'assets/images/appIcon.ico')],
     executableName: 'Webpost Scraper',
     appCopyright: '© 2024- tinywind',
     icon: path.resolve('assets/images/appIcon.ico'),
