@@ -1,8 +1,4 @@
 import '@main/window/windowPreload';
-import { Setting } from '@src/types';
-
-const setting: Setting = { theme: 'system', pollingInterval: 5, retention: 3, sites: [] };
-
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');
   const { env } = process;
@@ -12,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
   versions['license'] = env['npm_package_license'];
 
   for (const type of ['chrome', 'node', 'electron']) {
-    versions[type] = process.versions[type].replace('+', '');
+    versions[type] = process.versions[type]?.replace('+', '');
   }
 
   for (const type of ['react']) {

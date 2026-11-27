@@ -13,7 +13,6 @@
 import React, { useEffect, useRef } from 'react';
 import Navigator from './Navigator';
 import logo from '@assets/images/logo.png';
-import router from '@renderer/router';
 
 type Props = {
   title?: string;
@@ -34,7 +33,8 @@ const WindowFrame: React.FC<Props> = props => {
   const itsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const { parentElement } = itsRef.current;
+    const parentElement = itsRef.current?.parentElement;
+    if (!parentElement) return;
     parentElement.classList.add('has-electron-window');
     parentElement.classList.add('has-border');
 

@@ -28,9 +28,9 @@ const minimizePath = 'M 0,5 10,5 10,6 0,6 Z';
 const WindowControls: React.FC<Props> = props => {
   return (
     <section className={classNames('window-navigator-controls', `type-${props.platform}`)}>
-      <ControlButton name='minimize' onClick={() => navigator.minimize()} path={minimizePath} title={props.tooltips ? 'Minimize' : null} />
-      <ControlButton name='maximize' onClick={() => navigator.toggleMaximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : null} />
-      <ControlButton name='close' onClick={() => navigator.exit()} path={closePath} title={props.tooltips ? 'Close' : null} />
+      <ControlButton name='minimize' onClick={() => navigator.minimize()} path={minimizePath} title={props.tooltips ? 'Minimize' : undefined} />
+      <ControlButton name='maximize' onClick={() => navigator.toggleMaximize()} path={maximizePath} title={props.tooltips ? 'Maximize' : undefined} />
+      <ControlButton name='close' onClick={() => navigator.exit()} path={closePath} title={props.tooltips ? 'Close' : undefined} />
     </section>
   );
 };

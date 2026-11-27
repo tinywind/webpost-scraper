@@ -4,7 +4,7 @@ import React from 'react';
 interface IControlButtonProps {
   readonly name: string;
   readonly path: string;
-  readonly title: string;
+  readonly title?: string;
 }
 
 const ControlButton: React.FC<IControlButtonProps & React.HTMLAttributes<HTMLDivElement>> = props => {

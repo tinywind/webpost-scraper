@@ -3,10 +3,10 @@ import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faCheck } from '@fortawesome/free-solid-svg-icons';
 
-export default function AppModal({ children, title, closeModal, apply }: { children: any; title: string; closeModal: () => void; apply?: () => void }) {
+export default function AppModal({ children, title, closeModal, apply }: { children: React.ReactNode; title: string; closeModal: () => void; apply?: () => void }) {
   return (
     <Modal
-      parentSelector={() => document.querySelector('.window-content')}
+      parentSelector={() => document.querySelector<HTMLElement>('.window-content') ?? document.body}
       shouldCloseOnOverlayClick={false}
       isOpen={true}
       ariaHideApp={false}
