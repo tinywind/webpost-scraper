@@ -1,6 +1,3 @@
-import { load } from 'cheerio';
-import moment from 'moment';
-
 export type ThemeType = 'light' | 'dark' | 'system';
 
 export type Setting = {
@@ -59,35 +56,4 @@ export const cloneSite = (site: Site) => ({
   },
 });
 
-export const extractPosts = (html: string, site: Site): Post[] => {
-  const $ = load(html);
-  return $(site.articleSelector)
-    .toArray()
-    .map(article => {
-      const article$ = load($.html(article));
-      const titleEl = article$(site.titleSelector.selector);
-      const urlEl = article$(site.urlSelector.selector);
-      const dateEl = site.createdAtSelector.selector ? article$(site.createdAtSelector.selector) : null;
-      const titleProp = titleEl.prop(site.titleSelector.property || 'textContent') || '';
-      const urlProp = urlEl.prop(site.urlSelector.property || 'href') || '';
-      const dateProp = dateEl ? dateEl.prop(site.createdAtSelector.property || 'textContent') || '' : '';
-      let date: Date;
-      try {
-        date = moment(dateProp?.match(new RegExp(site.createdAtSelector.regex))?.[0] || dateProp).toDate();
-      } catch (ignored) {
-        date = new Date();
-      }
-      const title = titleProp?.match(new RegExp(site.titleSelector.regex))?.[0] || titleProp;
-      const url = urlProp?.match(new RegExp(site.urlSelector.regex))?.[0] || urlProp;
-      const createdAt = date.getTime();
-      return {
-        site,
-        title: title.trim(),
-        url: url.startsWith('http://') || url.startsWith('https://') ? url : url.startsWith('//') ? `${site.url.startsWith('https') ? 'https' : 'http'}:${url}` : new URL(url, site.url).href,
-        createdAt: isNaN(createdAt) || !createdAt ? Date.now() : createdAt,
-        read: false,
-        marked: false,
-      };
-    })
-    .filter(post => post && post.title && post.url && post.createdAt);
-};
+export { extractPosts } from './common/extractPosts';
