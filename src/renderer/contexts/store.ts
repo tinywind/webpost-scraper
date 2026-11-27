@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
-import { thunk } from 'redux-thunk';
 import settingReducer from './settingSlice';
 
 const logger = createLogger();
@@ -15,7 +14,7 @@ const initialState = {};
 const store = configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware => {
-    const middleware = getDefaultMiddleware().concat(thunk);
+    const middleware = getDefaultMiddleware();
     return process.env.NODE_ENV === 'development' ? middleware.concat(logger) : middleware;
   },
   devTools: process.env.NODE_ENV !== 'production',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cloneSite, Site } from '@src/types';
+import { Setting, Site } from '@src/types';
 import SiteModal, { Data } from '@components/modals/SiteModal';
 import BeatLoader from 'react-spinners/BeatLoader';
 import util from '@main/window/utilContextApi';
@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload, faSearch, faTrashCan, faUpload, faList } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuid } from 'uuid';
 import { useAppDispatch, useAppSelector } from '@renderer/contexts/store';
-import { setPollingInterval, setRetention, save, addSite, deleteSite, updateSite } from '@renderer/contexts/settingSlice';
+import { received } from '@renderer/contexts/settingSlice';
 import { error, success, warning } from '@renderer/utils/swals';
 import Loader from '@components/Loader';
 import router from '@renderer/router';
@@ -16,18 +16,21 @@ import router from '@renderer/router';
 export default function Settings() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [sites, setSites] = useState<Site[]>([]);
   const [siteData, setSiteData] = useState<Data | null>(null);
-  const [pollingIntervalState, setPollingIntervalState] = useState(5);
-  const [retentionState, setRetentionState] = useState(3);
   const dispatch = useAppDispatch();
-  const settingState = useAppSelector(state => state.setting);
+  const { pollingInterval, retention, sites } = useAppSelector(state => state.setting);
+
+  const persist = async (operation: Promise<Setting>) => {
+    try {
+      dispatch(received(await operation));
+      return true;
+    } catch (cause) {
+      await error(String(cause));
+      return false;
+    }
+  };
 
   useEffect(() => {
-    settingState.setting.pollingInterval && setPollingIntervalState(settingState.setting.pollingInterval);
-    settingState.setting.retention && setRetentionState(settingState.setting.retention);
-    settingState.setting.sites && setSites(settingState.setting.sites.map(site => cloneSite(site)));
-
     if (process.env.NODE_ENV !== 'development') return;
     setUrl('https://gall.dcinside.com/board/lists/?id=leagueoflegends6');
   }, []);
@@ -56,33 +59,20 @@ export default function Settings() {
         error(`Failed to fetch site data: ${result.statusText}`);
       }
     } catch (cause) {
-      error('Failed to load the page: ' + cause.message);
+      error('Failed to load the page: ' + String(cause));
     } finally {
       setLoading(false);
     }
   };
 
-  const exportSettings = () => util.exportSettings({ theme: 'system', pollingInterval: pollingIntervalState, retention: retentionState, sites: sites.map(site => cloneSite(site)) });
-  const importSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const importSettings = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const setting = JSON.parse(reader.result as string) as {
-          theme: 'system' | 'light' | 'dark';
-          pollingInterval: number;
-          retention: number;
-          sites: Site[];
-        };
-        if (setting.pollingInterval && setting.retention && setting.sites) {
-          setPollingIntervalState(setting.pollingInterval);
-          setRetentionState(setting.retention);
-          setSites(setting.sites);
-          dispatch(save({ setting }));
-          success('Settings imported');
-        }
-      };
-      reader.readAsText(file);
+    if (!file) return;
+    event.target.value = '';
+    try {
+      if (await persist(util.save(JSON.parse(await file.text())))) await success('Settings imported');
+    } catch (cause) {
+      await error(String(cause));
     }
   };
 
@@ -98,7 +88,7 @@ export default function Settings() {
             <span className='truncate'>{site.url}</span>
           </div>
         </div>
-        <button onClick={() => (setSites(sites.filter(s => s.id !== site.id)), dispatch(deleteSite({ id: site.id })))} className='button icon'>
+        <button onClick={() => persist(util.deleteSite(site.id))} className='button icon'>
           <FontAwesomeIcon icon={faTrashCan} />
         </button>
       </div>
@@ -112,7 +102,7 @@ export default function Settings() {
           <div className='flex justify-between items-center mb-2'>
             <h1 className='text-md font-bold text-gray-700'>Scraper Settings</h1>
             <div className='flex gap-2'>
-              <button onClick={exportSettings} className='button icon'>
+              <button onClick={() => util.exportSettings().catch(cause => error(String(cause)))} className='button icon'>
                 <FontAwesomeIcon icon={faDownload} />
               </button>
               <input type='file' onChange={importSettings} className='hidden' id='file-upload' />
@@ -139,8 +129,8 @@ export default function Settings() {
               ].map((e, index) => (
                 <button
                   key={index}
-                  onClick={() => (setPollingIntervalState(e.value), dispatch(setPollingInterval({ pollingInterval: e.value })))}
-                  className={`button ${pollingIntervalState === e.value ? 'active' : ''}`}>
+                  onClick={() => persist(util.setPollingInterval(e.value))}
+                  className={`button ${pollingInterval === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
@@ -153,7 +143,7 @@ export default function Settings() {
                 { value: 7, label: '7 days' },
                 { value: 14, label: '14 days' },
               ].map((e, index) => (
-                <button key={index} onClick={() => (setRetentionState(e.value), dispatch(setRetention({ retention: e.value })))} className={`button ${retentionState === e.value ? 'active' : ''}`}>
+                <button key={index} onClick={() => persist(util.setRetention(e.value))} className={`button ${retention === e.value ? 'active' : ''}`}>
                   {e.label}
                 </button>
               ))}
@@ -165,8 +155,8 @@ export default function Settings() {
                 {loading ? <BeatLoader size={6} color='white' /> : <FontAwesomeIcon icon={faSearch} />}
               </button>
             </div>
-            {sites.map((site, index) => (
-              <SiteItem key={index} site={site} />
+            {sites.map(site => (
+              <SiteItem key={site.id} site={site} />
             ))}
           </div>
         </div>
@@ -175,15 +165,7 @@ export default function Settings() {
         <SiteModal
           closeModal={() => setSiteData(null)}
           data={siteData}
-          addSite={(site: Site) => {
-            if (sites.find(s => s.id === site.id)) {
-              setSites(sites.map(s => (s.id === site.id ? site : s)));
-              dispatch(updateSite({ id: site.id, site }));
-            } else {
-              setSites([...sites, site]);
-              dispatch(addSite({ site }));
-            }
-          }}
+          addSite={site => persist(sites.some(s => s.id === site.id) ? util.updateSite(site) : util.insertSite(site))}
         />
       )}
       {loading && <Loader />}

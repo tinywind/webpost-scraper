@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { load } from 'cheerio';
-import { Post as PostType, extractPosts, Selector, Site } from '@src/types';
+import { Post as PostType, Selector, Site } from '@src/types';
+import { extractPosts } from '@common/extractPosts';
+import { error } from '@renderer/utils/swals';
 import util from '@main/window/utilContextApi';
 import AppModal from '@components/AppModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,7 +12,7 @@ import Post from '@components/Post';
 
 export type Data = Site & { html?: string };
 
-export default function SiteModal({ closeModal, data, addSite }: { closeModal: () => void; data: Data; addSite: (site: Site) => void }) {
+export default function SiteModal({ closeModal, data, addSite }: { closeModal: () => void; data: Data; addSite: (site: Site) => Promise<boolean> }) {
   const [selectors, setSelectors] = useState<{
     article: Selector;
     title: Selector;
@@ -33,6 +35,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
     try {
       setLoading(true);
       const result = await util.fetchSiteData(url);
+      if (!result.ok) throw new Error(result.statusText);
       setHtml(result.html);
 
       const $ = load(result.html);
@@ -55,14 +58,16 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
           createdAtSelector: selectors.date,
         }),
       );
+    } catch (cause) {
+      await error(String(cause));
     } finally {
       setLoading(false);
     }
   };
 
-  const apply = () => {
-    addSite({
-      ...data,
+  const apply = async () => {
+    const saved = await addSite({
+      id: data.id,
       name,
       favicon,
       url,
@@ -71,7 +76,7 @@ export default function SiteModal({ closeModal, data, addSite }: { closeModal: (
       urlSelector: selectors.link,
       createdAtSelector: selectors.date,
     });
-    closeModal();
+    if (saved) closeModal();
   };
 
   const InputFields = (field: 'article' | 'title' | 'link' | 'date', fields: ('selector' | 'property' | 'regex')[]) => (
