@@ -1,0 +1,6 @@
+# Orca worktree lifecycle hooks (only used when opened in Orca).
+scripts:
+  setup: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pnpm install --frozen-lockfile
