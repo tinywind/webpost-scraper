@@ -1,6 +1,8 @@
 name: Windows Package Check
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -42,7 +44,7 @@ jobs:
       - name: Lint
         working-directory: .tmp/windows-package
         run: pnpm lint
-      - name: Verify post extraction
+      - name: Run regression tests
         working-directory: .tmp/windows-package
         run: pnpm test
       - name: Build the Windows installer

@@ -24,7 +24,7 @@ const fixture = http.createServer((request, response) => {
   if (request.url === '/delayed/') { deferredResponse = response; return; }
   if (request.url !== '/news/') response.writeHead(404);
   if (!servePosts) return response.end('<title>Smoke fixture</title>');
-  response.end(`<title>Smoke fixture</title><article><a href="first">First smoke post</a><time>${new Date().toISOString()}</time></article><article><a href="/second">Second smoke post</a></article>`);
+  response.end(`<title>Smoke fixture</title><article><a href="first">First smoke post</a><time>${new Date().toISOString()}</time></article><article><a href="/second">Second smoke post</a></article><article><a href="/second">Duplicate URL</a></article>`);
 });
 
 async function waitFor(predicate, label, timeout = 30000) {
@@ -83,15 +83,17 @@ async function setWebsiteUrl(url) {
   );
 }
 
-async function start() {
+async function start(importLegacy = false) {
   const reservation = net.createServer();
   reservation.listen(0, '127.0.0.1');
   await once(reservation, 'listening');
   const port = reservation.address().port;
   await new Promise(resolve => reservation.close(resolve));
   const log = fs.openSync(path.join(work, `app-${checks.length}.log`), 'a');
-  child = spawn(executable, [`--remote-debugging-port=${port}`, `--user-data-dir=${path.join(work, 'profile')}`, '--disable-gpu', ...(process.platform === 'linux' ? ['--ozone-platform=x11'] : [])], {
-    cwd: work, stdio: ['ignore', log, log], env: { ...process.env, NODE_ENV: 'production' },
+  const cwd = importLegacy ? work : path.join(work, 'second-launch');
+  fs.mkdirSync(cwd, { recursive: true });
+  child = spawn(executable, [...(importLegacy ? [`--import-legacy-db=${work}`] : []), `--remote-debugging-port=${port}`, `--user-data-dir=${path.join(work, 'profile')}`, '--disable-gpu', ...(process.platform === 'linux' ? ['--ozone-platform=x11'] : [])], {
+    cwd, stdio: ['ignore', log, log], env: { ...process.env, NODE_ENV: 'production' },
   });
   fs.closeSync(log);
   child.on('error', error => exceptions.push(error.message));
@@ -123,8 +125,9 @@ async function start() {
 
 async function stop() {
   const exited = once(child, 'exit');
-  await evaluate('window.close()');
-  await Promise.race([exited, new Promise((_, reject) => setTimeout(() => reject(new Error('Application did not close')), 10000))]);
+  await evaluate('void setTimeout(() => window.close(), 0)');
+  const [code, signal] = await Promise.race([exited, new Promise((_, reject) => setTimeout(() => reject(new Error('Application did not close')), 10000))]);
+  assert.deepEqual([code, signal], [0, null], 'Application exits cleanly');
   socket.close();
   child = undefined;
 }
@@ -160,12 +163,21 @@ async function main() {
   const base = `http://127.0.0.1:${fixture.address().port}`;
   const site = { _id: 'smoke', id: 'smoke', name: 'Smoke fixture', url: `${base}/news/`, articleSelector: 'article', titleSelector: { selector: 'a', property: 'textContent' }, urlSelector: { selector: 'a', property: 'href' }, createdAtSelector: { selector: 'time', property: 'textContent' } };
   fs.writeFileSync(path.join(work, 'scraper-1__site.db'), JSON.stringify(site) + '\n');
-  await start();
+  await start(true);
+  assert.ok(fs.existsSync(path.join(work, 'profile', 'scraper-data', 'scraper-1__site.db')), 'Migrated site database exists in the profile');
   await check('renderer isolation and compiled styles', async () => {
+    assert.deepEqual(fs.readFileSync(path.join(path.dirname(executable), 'resources', 'appIcon.ico')), fs.readFileSync(path.join(project, 'assets/images/appIcon.ico')));
     assert.equal(await evaluate("typeof require"), 'undefined');
     assert.equal(await evaluate("getComputedStyle(document.getElementById('app')).display"), 'flex');
     assert.ok(await evaluate("document.getElementById('app').getBoundingClientRect().height > 400"));
     assert.ok(await evaluate("document.querySelector('[data-scope=contextmenu][data-part=root]').getBoundingClientRect().height > 400"), 'Context menu root preserves the list height');
+  });
+  await check('initial search remains active as the first poll arrives', async () => {
+    await evaluate("const search = document.querySelector('input[placeholder=Search]'); search.value = 'First smoke'; search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))");
+    await waitFor(() => evaluate("document.body.textContent.includes('Unread (2)')"), 'filtered poll');
+    assert.ok(await evaluate("document.body.textContent.includes('First smoke post')"));
+    assert.equal(await evaluate("document.body.textContent.includes('Second smoke post')"), false);
+    await evaluate("search.value = ''; search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))");
   });
   await check('network success, HTTP failure and invalid URL', async () => {
     assert.equal(await callRenderer('function (url) { return window.electronApi.fetchSiteData(url).then(result => result.ok && result.status === 200 && result.html.includes("First smoke post")); }', site.url), true);
@@ -215,6 +227,37 @@ async function main() {
     await evaluate("document.querySelector('button svg[data-icon=gear]').closest('button').click()");
     await waitFor(() => evaluate("document.body.textContent.includes('Scraper Settings')"), 'settings screen');
   });
+  await check('Shift input and persisted settings changes', async () => {
+    await evaluate(`document.querySelector('input[placeholder="Enter website URL to crawl"]').focus()`);
+    for (const [key, code, keyCode] of [['A', 'KeyA', 65], ['?', 'Slash', 191]]) {
+      await send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: keyCode, modifiers: 8, text: key });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: keyCode, modifiers: 8 });
+    }
+    assert.equal(await evaluate('document.activeElement.value'), 'A?');
+    await clickButton('15 min');
+    await waitFor(() => evaluate("Array.from(document.querySelectorAll('button.active')).some(b => b.textContent === '15 min')"), 'saved polling interval');
+    assert.equal((await evaluate('window.electronApi.load()')).pollingInterval, 15);
+  });
+  await check('settings import updates the form only after a successful write', async () => {
+    async function upload(value) {
+      await callRenderer(`function (value) {
+        const input = document.getElementById('file-upload');
+        const files = new DataTransfer();
+        files.items.add(new File([JSON.stringify(value)], 'settings.json', { type: 'application/json' }));
+        input.files = files.files;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }`, value);
+    }
+    const original = await evaluate('window.electronApi.load()');
+    await upload({ ...original, sites: [site, site] });
+    await waitFor(() => evaluate("document.querySelector('.swal2-popup')?.textContent.includes('Duplicate site ID')"), 'rejected import');
+    assert.deepEqual(await evaluate('window.electronApi.load()'), original);
+    await evaluate("document.querySelector('.swal2-confirm').click()");
+    await upload({ ...original, sites: [{ ...site, name: 'Imported fixture' }] });
+    await waitFor(() => evaluate("document.querySelector('.swal2-popup')?.textContent.includes('Settings imported')"), 'saved import');
+    assert.ok(await evaluate("document.body.textContent.includes('Imported fixture')"));
+    await evaluate("document.querySelector('.swal2-confirm').click()");
+  });
   await check('loading and site modal overlays retain transparency', async () => {
     await setWebsiteUrl(base + '/delayed/');
     await evaluate("document.querySelector('input[placeholder=\"Enter website URL to crawl\"]').parentElement.querySelector('button').click()");
@@ -239,6 +282,10 @@ async function main() {
     await callRenderer('function (url) { return window.electronApi.deletePost(url); }', base + '/second');
     await stop();
     await start();
+    await clickButton('All (');
+    await waitFor(() => evaluate("document.body.textContent.includes('First smoke post')"), 'immediate initial list', 3000);
+    assert.ok(fs.existsSync(path.join(work, 'profile', 'scraper-data', 'scraper-1__post.db')));
+    assert.equal(fs.readFileSync(path.join(work, 'scraper-1__site.db'), 'utf8'), JSON.stringify(site) + '\n');
     const setting = await evaluate('window.electronApi.load()');
     assert.equal(setting.theme, 'dark');
     assert.equal(setting.pollingInterval, 1);
